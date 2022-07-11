@@ -1,8 +1,30 @@
 <html>
   <head>
+	  <!-- Include p5.js library -->
+    	<script src="p5.js">
   </head>
   <body>
 	  Hello, World
+	<script>
+	function setup() {
+		createCanvas(400, 400);
+		colorMode(HSB);
+		strokeWeight(25);
+	}
 
+	var count = 0;
+
+	function draw() {
+		for (var i = 0; i < windowWidth; i+=15){
+			for (var j = 0; j < windowWidth; j+=15){
+				stroke(count+=random(0.0001, 0.001), 200, 400);
+				point(i, j);
+				if (count > 400){
+					count = 0;
+				}
+			}
+		}
+	}
+	</script>
   </body>
 </html>
