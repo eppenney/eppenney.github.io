@@ -14,15 +14,7 @@
 	var count = 0;
 
 	function draw() {
-		for (var i = 0; i < windowWidth; i+=15){
-			for (var j = 0; j < windowWidth; j+=15){
-				stroke(count+=random(0.0001, 0.001), 200, 400);
-				point(i, j);
-				if (count > 400){
-					count = 0;
-				}
-			}
-		}
+		background(0);
 	};
 	</script>
   </body>
