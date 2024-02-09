@@ -50,3 +50,30 @@ ul li {
 strong {
     font-weight: bold;
 }
+
+article {
+    margin-bottom: 20px;
+}
+
+article h3 {
+    color: #555;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin-bottom: 8px;
+}
+
+ul li a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+}
