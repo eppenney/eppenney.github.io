@@ -60,13 +60,22 @@ ul li {
 }
 
 ul li a {
-    color: #007BFF;
+    color: #000;
     text-decoration: none;
     font-weight: bold;
-    border-bottom: 2px solid #007BFF; /* Add a bottom border to mimic underlining */
-    transition: border-bottom 0.3s; /* Add a transition effect */
+    border-bottom: 1px solid #000; /* Change to 1px solid line */
+    transition: border-bottom 0.3s;
 }
 
 ul li a:hover {
-    border-bottom: 2px solid #0056b3; /* Change the border color on hover */
+    border-bottom: 2px solid #000; /* Increase thickness on hover */
+}
+
+header p a {
+    color: #000;
+    text-decoration: underline;
+}
+
+header p a:hover {
+    text-decoration: none; /* Remove underline on hover */
 }
