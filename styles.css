@@ -190,3 +190,46 @@ a:hover {
         margin-bottom: 20px; /* Add margin between the sections */
     }
 }
+.image-gallery {
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+}
+.image-gallery img {
+    max-width: 100%;
+    height: auto;
+    display: none;
+    margin: 0 auto;
+}
+.image-gallery img:first-child {
+    display: block; /* Display the first image */
+}
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.image-gallery video {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Initially hide the video */
+    margin: 0 auto;
+}
+
+.gallery-image {
+    max-width: 100%;
+    min-width:500px;
+}
+
+.prev {
+    left: 0;
+}
+.next {
+    right: 0;
+}
