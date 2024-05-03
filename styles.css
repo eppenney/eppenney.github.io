@@ -79,10 +79,12 @@ article h3 {
 ul {
     list-style-type: circle;
     padding: 0;
+    padding-left: 50px;
 }
 
 ul li {
     margin-bottom: 8px;
+    
 }
 
 ul li a {
