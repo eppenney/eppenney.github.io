@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Details</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+</head>
+
+<body>
+    <header>
+        <div class="profile-picture">
+            <img src="profile_circle.png" alt="Ethan Penney's Profile Picture">
+        </div>
+        <h1>Ethan Penney</h1>
+        <p>Game Designer, Software Developer, Computer Science Tutor</p>
+    </header>
+    <section>
+        <a href="index.html">Back to Home</a>
+    </section>
+    
+    <section id="project-details">
+        <article>
+            <h2 id="ePat">Robertson Library Perpetual Access Rights Tracker - <a target="_blank" href="https://github.com/eppenney/eBook-Perpetual-Access-Rights-Tracker">GitHub</a></h2>
+            <p class="sub-header">Desktop Application | October 2023 – April 2024</p>
+            <p>Detailed description of the project...</p>
+            <div class="image-gallery">
+                <img class="gallery-image" src="ePat_example_1.png" alt="Example 1">
+                <img class="gallery-image" src="ePat_example_2.png" alt="Example 2">
+                <img class="gallery-image" src="ePat_example_3.png" alt="Example 3">
+                <img class="gallery-image" src="ePat_example_4.png" alt="Example 4">
+                <img class="gallery-image" src="ePat_example_5.png" alt="Example 5">
+                <img class="gallery-image" src="ePat_example_6.png" alt="Example 6">
+                <img class="gallery-image" src="ePat_example_7.png" alt="Example 7">
+                
+                <!-- Add more images as needed -->
+                <span class="prev" onclick="prevImage(this)">❮</span>
+                <span class="next" onclick="nextImage(this)">❯</span>
+            </div>
+        </article>
+
+        <article>
+            <h2 id="grocery-keeper">Grocery Keeper - <a target="_blank" href="https://github.com/UPEI-Android/cs3130-2023-groupprojects-shovelwaresquad">GitHub</a></h2>
+            <p class="sub-header">Android Application | January 2023 – April 2023</p>
+            <p>Detailed description of the project...</p>
+            <div class="image-gallery">
+                <img class="gallery-image" src="gKeeper_example_1.png" alt="Example 1">
+                <img class="gallery-image" src="gKeeper_example_2.png" alt="Example 2">
+                <img class="gallery-image" src="gKeeper_example_3.png" alt="Example 3">
+                <img class="gallery-image" src="gKeeper_example_4.png" alt="Example 4">
+                <img class="gallery-image" src="gKeeper_example_5.png" alt="Example 5">
+                <img class="gallery-image" src="gKeeper_example_6.png" alt="Example 6">
+
+                <!-- Add more images as needed -->
+                <span class="prev" onclick="prevImage(this)">❮</span>
+                <span class="next" onclick="nextImage(this)">❯</span>
+            </div>
+        </article>
+
+        <article>
+            <h2 id="game-jams">Game Jams - <a target="_blank" href="https://way2rad2bsad.itch.io">Itch.io</a></h2>
+            <p class="sub-header">Unity Projects | Various Dates 2022-2024</p>
+            <p>Detailed description of the project...</p>
+            <div class="image-gallery">
+                <video controls class="gallery-image">
+                    <source src="game_jam_example_3.5.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <img class="gallery-image" src="game_jame_example_1.png" alt="Example 1">
+                <img class="gallery-image" src="game_jame_example_2.png" alt="Example 2">
+                <img class="gallery-image" src="game_jame_example_3.png" alt="Example 3">
+                <img class="gallery-image" src="game_jame_example_4.png" alt="Example 4">
+                <img class="gallery-image" src="game_jame_example_6.png" alt="Example 6">
+                <video controls class="gallery-image" style = "display: none;">
+                    <source src="game_jam_example_7.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <img class="gallery-image" src="game_jame_example_7.png" alt="Example 7">
+                <img class="gallery-image" src="game_jame_example_8.png" alt="Example 8">
+                <img class="gallery-image" src="game_jame_example_9.png" alt="Example 9">
+                <img class="gallery-image" src="game_jame_example_10.png" alt="Example 10">
+                <img class="gallery-image" src="game_jame_example_11.png" alt="Example 11">
+                <img class="gallery-image" src="game_jame_example_12.png" alt="Example 12">
+                <img class="gallery-image" src="game_jame_example_13.png" alt="Example 13">
+                <img class="gallery-image" src="game_jame_example_14.png" alt="Example 14">
+                <img class="gallery-image" src="game_jame_example_15.png" alt="Example 15">
+                <img class="gallery-image" src="game_jame_example_16.png" alt="Example 16">
+                <img class="gallery-image" src="game_jame_example_17.png" alt="Example 17">
+                
+                <!-- Add more images as needed -->
+                <span class="prev" onclick="prevImage(this)">❮</span>
+                <span class="next" onclick="nextImage(this)">❯</span>
+            </div>
+        </article>
+        <article>
+            <h2  id="particle-systems">OpenGL Particle System - <a target="_blank" href="https://github.com/eppenney/Particle-System-Assignment">GitHub</a></h2>
+            <p class = "sub-header">Classwork | January - April 2024</p>            <p>Detailed description of the project...</p>
+            <div class="image-gallery">
+                <video controls class="gallery-video">
+                    <source src="ParticleSystemExample.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+
+            </div>
+        </article>
+    </section>
+
+    <footer>
+        <div class="contact-info">
+            <div class="contact-column">
+                <h4>Contact</h4>
+                <p>Email: <a target="_blank" href="mailto:ethanpenney2341@gmail.com" style="color: white;">ethanpenney2341@gmail.com</a></p>
+                <p>Phone: <span style="color: white;">+1 (902) 599-1204</span></p>
+            </div>
+            <div class="contact-column">
+                <h4>Websites</h4>
+                <p><a target="_blank" href="https://www.linkedin.com/in/ethan-penney-a5b845220/" style="color: white;" target="_blank">LinkedIn Profile</a></p>
+                <p><a target="_blank" href="https://github.com/eppenney" style="color: white;" target="_blank">GitHub Profile</a></p>
+                <p><a target="_blank" href="https://way2rad2bsad.itch.io" style="color: white;" target="_blank">Itch.io Profile</a></p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // JavaScript for cycling image gallery
+        function prevImage(element) {
+            var gallery = element.parentElement;
+            var images = gallery.querySelectorAll('.gallery-image');
+            var currentImageIndex = Array.from(images).findIndex(img => img.style.display !== 'none');
+            var prevImageIndex = currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1;
+            images[currentImageIndex].style.display = 'none';
+            images[prevImageIndex].style.display = 'block';
+        }
+
+        function nextImage(element) {
+            var gallery = element.parentElement;
+            var images = gallery.querySelectorAll('.gallery-image');
+            var currentImageIndex = Array.from(images).findIndex(img => img.style.display !== 'none');
+            var nextImageIndex = currentImageIndex === images.length - 1 ? 0 : currentImageIndex + 1;
+            images[currentImageIndex].style.display = 'none';
+            images[nextImageIndex].style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>
