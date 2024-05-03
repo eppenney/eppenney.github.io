@@ -87,7 +87,7 @@ ul li {
     
 }
 
-ul li a {
+a {
     color: #000;
     text-decoration: none;
     font-weight: bold;
@@ -95,16 +95,12 @@ ul li a {
     transition: border-bottom 0.3s;
 }
 
-ul li a:hover {
-    border-bottom: 2px solid #000; /* Increase thickness on hover */
+a:hover {
+    color: #333;
+    border-bottom: 2px solid #333; /* Increase thickness on hover */
 }
 
-header p a {
-    color: #000;
-    text-decoration: underline;
-}
-
-header p a:hover {
+a:hover {
     text-decoration: none; /* Remove underline on hover */
 }
 
@@ -115,3 +111,71 @@ header p a:hover {
     margin-left: -2px;
   }
   
+  footer {
+    background-color: #333; /* Background color for the footer */
+    color: white; /* Text color for the footer */
+    padding: 20px; /* Padding for the footer */
+}
+
+.contact-info {
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-around; /* Evenly space the columns */
+}
+
+.contact-column {
+    width: 45%; /* Set width for each column */
+}
+
+.sidebar {
+    position: fixed;
+    top: 300px;
+    right: -275px; /* Initially hide the sidebar */
+    transform: translateY(-50%);
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    transition: right 0.3s ease;
+    text-align: right;
+    width:350px;
+}
+
+.show-contact {
+    right:0;
+    top: 420px;
+}
+
+.sidebar button {
+    background-color: #555;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-bottom: 0px;
+    float:left;
+}
+
+.contact-tab {
+    display: none;
+}
+
+.contact-tab h3 {
+    margin-top: 0;
+}
+
+.contact-tab p {
+    margin: 5px 0;
+}
+
+.contact-tab-link {
+    color: #FFF;
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 1px solid #ffffff; /* Change to 1px solid line */
+    transition: border-bottom 0.3s;
+}
+
+.contact-tab-link:hover {
+    color: #cacaca;
+    border-bottom: 2px solid #9c9c9c; /* Increase thickness on hover */
+    text-decoration: none;
+}
