@@ -1,0 +1,106 @@
+<!DOCTYPE html> 
+
+<html>
+<head>
+	<link rel="stylesheet" href="standStyle.css">
+</head>
+
+<body>
+	<header>
+		<table class = "menu">
+			<tr>
+				<th><a href = "index.html">LazerFocusCoding</a></th>
+				<th><a href = "pricing.html">Pricing</a></th>
+				<th><a href = "faq.html">FAQ</a></th>
+				<th><a href = "createAccount.html">Get Started</a></th>
+				<th><a href = "#abt">Log In</a></th>
+			</tr>
+		</table>
+	</header>
+	
+	<div class = "banner" style="background-image:url('images/stock_computer.jpg')">
+		<div style="background-color:White; opacity:0.6;">
+		<div class ="innerCenterCard">FAQ</div>
+		</div>
+	</div>
+	
+	<br><br>
+	
+	<table class = "textCard" style = "width:80%; text-align:left;font-size:25px;">
+		<tr>
+			<td>
+				<button type="button" class = "button" onclick="Q1('q1', 'Idk man, I just work here')">How the flipping heck do I sign up???</button>
+				<div id="q1"></div>
+			</td>
+		</tr>
+		<tr>	
+			<td>
+				<button type="button" class = "button" onclick="Q1('q2', 'Idk man, I just work here')">How the flipping heck do I sign up???</button>
+				<div id="q2"></div>
+			</td>
+		</tr>
+		<tr>	
+			<td>
+				<button type="button" class = "button" onclick="Q1('q3', 'Idk man, I just work here')">How the flipping heck do I sign up???</button>
+				<div id="q3"></div>
+			</td>
+		</tr>
+		<tr>	
+			<td>
+				<button type="button" class = "button" onclick="Q1('q4', 'Idk man, I just work here')">How the flipping heck do I sign up???</button>
+				<div id="q4"></div>
+			</td>
+		</tr>
+		<tr>	
+			<td>
+				<button type="button" class = "button" onclick="Q1('q5', 'Idk man, I just work here')">How the flipping heck do I sign up???</button>
+				<div id="q5"></div>
+			</td>
+		</tr>
+	</table>	
+	<br><br><br>
+	<footer>
+		<br><br><br>
+		<div class = "parent flex-parent" style="background-color:LightGray;">
+		<div class = "child flex-child footerText">
+			A fun and interactive learning environment. 
+		</div>
+		<div class = "child flex-child footerText">
+			I love typing things!
+			<br>
+			<br>
+			Especially with line breaks! 
+			<br>
+			<br>
+			Too far.
+		</div>
+		<div class = "child flex-child footerText">
+			Designed to lay a solid foundation that will impact future coders careers.
+			<br>
+			<br>
+			Click me! 
+			<br>
+			<br>
+			Ha! Dummy
+		</div>
+		<div class = "child flex-child footerText">
+			Wowee, more so much text
+		</div>
+		<div class = "child flex-child footerText">
+			Woah. More text??? Crazy!
+		</div>
+	</div>
+	<br><br><br>
+	</footer>
+	
+	<script>
+		function Q1(id, text){
+			if (document.getElementById(id).innerHTML === ""){
+				document.getElementById(id).innerHTML = "<div style='padding:20px;font-size:20px;margin:20px;'>" + text + "</div>";
+			} else {
+				document.getElementById(id).innerHTML = "";
+			}
+		}
+	</script>
+</body>
+</html>
