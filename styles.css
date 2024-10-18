@@ -275,3 +275,43 @@ a:hover {
         max-width: 90%; /* Use a wider width on small screens */
     }
 }
+
+.navbar {
+    background-color: #333; /* Background color */
+    padding: 10px 0; /* Padding for top and bottom */
+    width: 100%; /* Ensure it spans the entire width */
+    transition: top 0.3s; /* Smooth transition for the sticky effect */
+    position: relative; /* Position relative for normal scrolling */
+    z-index: 1000; /* Ensure it sits above other content */
+    margin: 0; /* Remove margin */
+    left: 0; /* Align to the left edge */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+.navbar ul {
+    list-style-type: none; /* Remove bullet points */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    display: flex; /* Use flexbox for layout */
+    justify-content: center; /* Center the items */
+}
+
+
+.navbar li {
+    margin: 0 15px; /* Margin between items */
+}
+
+.navbar a {
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Make text bold */
+    transition: color 0.3s; /* Smooth transition on hover */
+}
+
+.navbar a:hover {
+    color: #ddd; /* Change color on hover */
+}
+
+body {
+    padding-top: 0px; /* Adjust this value according to the height of your navbar */
+}
