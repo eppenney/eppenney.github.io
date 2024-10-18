@@ -55,6 +55,16 @@ section {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+@media(max-width:1000px) {
+    section{
+        max-width: 80%;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+}
 
 h2 {
     color: #333;
@@ -232,4 +242,36 @@ a:hover {
 }
 .next {
     right: 0;
+}
+
+.collapsible-content {
+    display: none;
+}
+
+/* Indicate a collapsible section is clickable */
+.collapsible {
+    cursor: pointer;
+}
+
+.arrow {
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.3s ease; /* Smooth rotation animation */
+}
+
+/* Rotate the arrow when the section is expanded */
+.collapsible.expanded .arrow {
+    transform: rotate(90deg); /* Rotate the arrow to point downward */
+}
+
+.bio-container {
+    max-width: 50%; /* Set maximum width to 50% */
+    margin: 0 auto; /* Center the container */
+    padding: 0 20px; /* Optional: Add padding for spacing */
+}
+
+@media (max-width: 600px) { /* Adjust for small screens */
+    .bio-container {
+        max-width: 90%; /* Use a wider width on small screens */
+    }
 }

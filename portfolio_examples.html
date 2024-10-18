@@ -22,57 +22,39 @@
     
     <section id="project-details">
         <article>
-            <h2 id="ePat">Robertson Library Perpetual Access Rights Tracker - <a target="_blank" href="https://github.com/eppenney/eBook-Perpetual-Access-Rights-Tracker">GitHub</a></h2>
-            <p class="sub-header">Desktop Application | October 2023 – April 2024</p>
-            <p>During my time working on the Robertson Library Perpetual Access Rights Tracker, 
-                my team and I created a detailed document over the course of four months with technical 
-                requirements, roadmaps, diagrams, and thorough planning before we executed creation of the 
-                application during the winter semester. The bulk of my work during the project was focused 
-                on the file upload and export functionality, making multithreaded loading processes. I did 
-                a large amount of work on the UI as well, and spent much of my time connecting the pieces completed 
-                by other group members into a cohesive whole.</p>
-            <div class="image-gallery">
-                <img class="gallery-image" src="images/ePat_example_1.png" alt="Example 1">
-                <img class="gallery-image" src="images/ePat_example_2.png" alt="Example 2">
-                <img class="gallery-image" src="images/ePat_example_3.png" alt="Example 3">
-                <img class="gallery-image" src="images/ePat_example_4.png" alt="Example 4">
-                <img class="gallery-image" src="images/ePat_example_5.png" alt="Example 5">
-                <img class="gallery-image" src="images/ePat_example_6.png" alt="Example 6">
-                <img class="gallery-image" src="images/ePat_example_7.png" alt="Example 7">
-                
-                <!-- Add more images as needed -->
-                <span class="prev" onclick="prevImage(this)">❮</span>
-                <span class="next" onclick="nextImage(this)">❯</span>
-            </div>
-        </article>
-
-        <article>
-            <h2 id="grocery-keeper">Grocery Keeper - <a target="_blank" href="https://github.com/UPEI-Android/cs3130-2023-groupprojects-shovelwaresquad">GitHub</a></h2>
-            <p class="sub-header">Android Application | January 2023 – April 2023</p>
-            <p>This project was developed during the winter semester in 2023, with a small group of three members, including myself. Over the course of 
-                the 4 months we developed an application to keep track of grocery lists and make price-based suggestions. The bulk of my work was in the 
-                creation of a web-scraping tool that would find and identify prices of relavent items and suggest them to the user. 
+            <h2 class="collapsible"  id="particle-systems">
+                <span class="arrow">►</span>OpenGL Particle System - <a target="_blank" href="https://github.com/eppenney/Particle-System-Assignment">GitHub</a></h2>
+            <p class = "sub-header">Classwork | January - April 2024</p>            
+            <div class="collapsible-content">
+            <p>This project was developed as part of my advanced graphics course during my final semester at UPEI. 
+                <br><br>
+                I implemented a particle system using linked list memory management to create a dynamic pool of particles, 
+                enabling efficient addition and removal as needed. The system was designed to be data-driven, allowing for 
+                easy expansion through XML without requiring additional code modifications. 
+                <br><br>
+                To demonstrate the system's versatility, I created two distinct visual effects: one featuring two emitters 
+                for smoke and fire, and another using a single emitter to generate fog. 
+                <br><br>
+                The entire project was built using C++ and OpenGL on top of a foundational engine called Wolf, 
+                with all particle, emitter, rendering, and shader code developed exclusively by me. 
             </p>
             <div class="image-gallery">
-                <img class="gallery-image" src="images/gKeeper_example_1.png" alt="Example 1">
-                <img class="gallery-image" src="images/gKeeper_example_2.png" alt="Example 2">
-                <img class="gallery-image" src="images/gKeeper_example_3.png" alt="Example 3">
-                <img class="gallery-image" src="images/gKeeper_example_4.png" alt="Example 4">
-                <img class="gallery-image" src="images/gKeeper_example_5.png" alt="Example 5">
-                <img class="gallery-image" src="images/gKeeper_example_6.png" alt="Example 6">
+                <video controls class="gallery-video">
+                    <source src="videos/ParticleSystemExample.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
 
-                <!-- Add more images as needed -->
-                <span class="prev" onclick="prevImage(this)">❮</span>
-                <span class="next" onclick="nextImage(this)">❯</span>
             </div>
+        </div>
         </article>
-
         <article>
-            <h2 id="game-jams">Game Jams - <a target="_blank" href="https://way2rad2bsad.itch.io">Itch.io</a></h2>
+            <h2 class="collapsible"  id="game-jams">
+                <span class="arrow">►</span>Game Jams - <a target="_blank" href="https://way2rad2bsad.itch.io">Itch.io</a></h2>
             <p class="sub-header">Unity Projects | Various Dates 2022-2024</p>
-            <p>I have created several Unity Projects in my spare time and for game jams hosted on itch.io. This speaks 
-                to my passion for game design and my ability to problem sovle and thrive under short deadlines. Hosted on 
-                my account there is also several small projects I created during my learning process. 
+            <div class="collapsible-content">
+            <p>I have developed several Unity projects in my spare time and for game jams hosted on itch.io, showcasing my passion 
+                for game design and my ability to solve problems effectively under tight deadlines. My itch.io profile features a variety of 
+                these smaller projects that I created as part of my ongoing learning process.
             </p>
             <div class="image-gallery">
                 <img class="gallery-image" src="images/game_jame_example_1.png" alt="Example 1">
@@ -104,24 +86,66 @@
                 <span class="prev" onclick="prevImage(this)">❮</span>
                 <span class="next" onclick="nextImage(this)">❯</span>
             </div>
+        </div>
         </article>
         <article>
-            <h2  id="particle-systems">OpenGL Particle System - <a target="_blank" href="https://github.com/eppenney/Particle-System-Assignment">GitHub</a></h2>
-            <p class = "sub-header">Classwork | January - April 2024</p>            
-            <p>This project was created for my advanced graphics course taken in my last semester at UPEI. I used linked list memory management 
-                to create a pool of particles that would be killed and added as needed. The system is data-driven and able to be expanded using 
-                no additional code other than xml. I demonstrated the system's capabilities by creating two effects, one with two emitters, smoke
-                and fire, and the other with one fog emitter. This was coded using c++ and openGL on top of a basic engine called wolf. All particle,
-                emitter, rendering, and shader code written by me. 
+            <h2 class="collapsible"  id="ePat">
+                <span class="arrow">►</span>Robertson Library Perpetual Access Rights Tracker - <a target="_blank" href="https://github.com/eppenney/eBook-Perpetual-Access-Rights-Tracker">GitHub</a></h2>
+            <p class="sub-header">Desktop Application | October 2023 – April 2024</p>
+            <div class="collapsible-content">
+            <p>During my time working on the Robertson Library Perpetual Access Rights Tracker, 
+                my team and I developed a comprehensive technical document over the course of four months. 
+                This document included detailed requirements, roadmaps, diagrams, and thorough planning, 
+                which laid the groundwork for the application's creation during the winter semester.<br><br>
+
+                My primary focus in this project was on implementing file upload and export functionality, 
+                along with developing multithreaded loading processes to enhance performance. I also contributed 
+                significantly to the UI design, ensuring a cohesive user experience by integrating the various 
+                components developed by other team members into a unified application.</p>
+            <div class="image-gallery">
+                <img class="gallery-image" src="images/ePat_example_1.png" alt="Example 1">
+                <img class="gallery-image" src="images/ePat_example_2.png" alt="Example 2">
+                <img class="gallery-image" src="images/ePat_example_3.png" alt="Example 3">
+                <img class="gallery-image" src="images/ePat_example_4.png" alt="Example 4">
+                <img class="gallery-image" src="images/ePat_example_5.png" alt="Example 5">
+                <img class="gallery-image" src="images/ePat_example_6.png" alt="Example 6">
+                <img class="gallery-image" src="images/ePat_example_7.png" alt="Example 7">
+                
+                <!-- Add more images as needed -->
+                <span class="prev" onclick="prevImage(this)">❮</span>
+                <span class="next" onclick="nextImage(this)">❯</span>
+            </div>
+        </div>
+        </article>
+
+        <article>
+            <h2 class="collapsible"  id="grocery-keeper">
+                <span class="arrow">►</span>Grocery Keeper - <a target="_blank" href="https://github.com/UPEI-Android/cs3130-2023-groupprojects-shovelwaresquad">GitHub</a></h2>
+            <p class="sub-header">Android Application | January 2023 – April 2023</p>
+            <div class="collapsible-content">
+            <p>This project was developed during the winter semester of 2023 with a small 
+                team of three members, including myself. Over the course of four months, 
+                we created an application designed to track grocery lists and provide price-based 
+                suggestions. My primary contribution was developing a web-scraping tool that 
+                efficiently identified relevant item prices and recommended them to the user.
             </p>
             <div class="image-gallery">
-                <video controls class="gallery-video">
-                    <source src="videos/ParticleSystemExample.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <img class="gallery-image" src="images/gKeeper_example_1.png" alt="Example 1">
+                <img class="gallery-image" src="images/gKeeper_example_2.png" alt="Example 2">
+                <img class="gallery-image" src="images/gKeeper_example_3.png" alt="Example 3">
+                <img class="gallery-image" src="images/gKeeper_example_4.png" alt="Example 4">
+                <img class="gallery-image" src="images/gKeeper_example_5.png" alt="Example 5">
+                <img class="gallery-image" src="images/gKeeper_example_6.png" alt="Example 6">
 
+                <!-- Add more images as needed -->
+                <span class="prev" onclick="prevImage(this)">❮</span>
+                <span class="next" onclick="nextImage(this)">❯</span>
             </div>
+        </div>
         </article>
+
+        
+        
     </section>
 
     <footer>
@@ -158,6 +182,20 @@
             images[currentImageIndex].style.display = 'none';
             images[nextImageIndex].style.display = 'block';
         }
+        document.querySelectorAll('.collapsible').forEach(header => {
+            header.addEventListener('click', function () {
+                // Toggle the 'expanded' class on the header
+                this.classList.toggle('expanded');
+                
+                // Find the next sibling element with the 'collapsible-content' class
+                const content = this.nextElementSibling.nextElementSibling;
+                if (content.style.display === 'none' || content.style.display === '') {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            });
+        });
     </script>
 </body>
 

@@ -14,10 +14,22 @@
             <img src="profile_circle.png" alt="Ethan Penney's Profile Picture">
         </div>
         <h1>Ethan Penney</h1>
-        <p>Game Designer, Software Developer</p>
+        <div class="bio-container">
+        <p>Game Designer | Software Developer</p><br>
+        <p class="sub-header">Based in Nova Scotia, Canada</p>
+    </div>
         <br>
-        <p class = "sub-header">Nova Scotia, Canada</p>
     </header>
+
+    <section id="about-me">
+        <h2>About Me</h2>
+        <p>
+            Based in Nova Scotia, Canada, I am a passionate game designer and software developer with a 
+            Bachelor of Science in Computer Science from the University of Prince Edward Island. I have a zeal
+            for game design, both on the board and on the screen, and a particular affinity for TTRPG's. I aim to create 
+            engaging experiences through video games, combining my love for storytelling and immersive media.
+        </p>
+    </section>
 
     <section id="education">
         <h2>Education</h2>
@@ -32,28 +44,27 @@
     </section>
 
     <section id="projects">
-        <h2>Portfolio</h2>
+        <h2>Portfolio Overview -  <a href="portfolio_examples.html#game-jams">View Examples / Details</a></h2>
         <article>
-            <h3>Unity Game Jams - 
-                <a target="_blank" href="https://way2rad2bsad.itch.io">Itch.io</a>
-                 - <a href="portfolio_examples.html#game-jams">Examples</a></h3>
-            <p class = "sub-header">Unity Projects | Various Dates 2022-2024</p>
+            <h3>Unity Game Jams - <a target="_blank" href="https://way2rad2bsad.itch.io">Itch.io</a></h3>
+            <p class="sub-header">Unity Projects | Various Dates: 2022-2024</p>
             <ul>
-                <li>I have developed a number of small Unity projects during short Game Jams hosted on Itch.io. </li>
-                <li>During these projects, I utilized Unity 2D, 3D C#, Blender, OOP, and game architecture concepts. 
-                    I worked under short deadlines to create functional prototypes.</li>
+                <li>Developed numerous Unity projects both independently and during game jams hosted on itch.io.</li>
+                <li>Created functional prototypes under tight deadlines, demonstrating strong problem-solving skills.</li>
+                <li>Utilized Unity 2D, 3D, C#, Blender, object-oriented programming, and game architecture concepts.</li>
+                <li>Focused on continuous learning and growth, with a diverse array of smaller projects showcased on my itch.io profile.</li>
             </ul>
         </article>
+        
         <article>
-            <h3>OpenGL Particle System - 
-                <a target="_blank" href="https://github.com/eppenney/Particle-System-Assignment">GitHub</a>
-                 - <a href="portfolio_examples.html#particle-systems">Examples</a></h3>
+            <h3>OpenGL Particle System - <a target="_blank" href="https://github.com/eppenney/Particle-System-Assignment">GitHub</a></h3>
             <p class = "sub-header">Classwork | January - April 2024</p>
             <ul>
-                <li>During my last year of University, I developed a particle system within OpenGL. </li>
-                <li>This particle system was built on top of a bare-bones example engine given to me by my professor, the Wolf engine.</li>
-                <li>The particle system employed a data-driven architecture and was built to be efficient during runtime.</li>
-                <li>In creating this system, I utilized linked-lists, rendering techniques, as well as fragment and vertex shader coding.</li>
+                <li>Developed a dynamic particle system using OpenGL during my final year at university, built on the foundational Wolf engine provided by my professor.</li>
+                <li>Implemented linked list memory management to create an efficient pool of particles, enabling seamless addition and removal during runtime.</li>
+                <li>Designed the system with a data-driven architecture, allowing for easy expansion through XML without additional code modifications.</li>
+                <li>Created two distinct visual effects to showcase the system's capabilities: one with two emitters for smoke and fire, and another with a single emitter for fog.</li>
+                <li>Executed the entire project using C++ and OpenGL, developing all particle, emitter, rendering, and shader code independently.</li>
             </ul>
         </article>
         <article>
@@ -62,9 +73,10 @@
                  - <a href="portfolio_examples.html#ePat">Examples</a></h3>
             <p class = "sub-header">Desktop Application | October 2023 – April 2024</p>
             <ul>
-                <li>In my final year at UPEI, I developed a functional desktop application as part of a team of 6 students.</li>
-                <li>The primary focus for this application was verifying and keeping track of perpetual access rights for eBooks.</li>
-                <li>My primary contributions included creating multithreaded functionality, bug fixing, and incorporating the work done by my teammates into the final build.</li>
+                <li>Developed a functional desktop application as part of a six-member team during my final year at UPEI, focusing on verifying and tracking perpetual access rights for eBooks.</li>
+                <li>Contributed to the project by creating multithreaded functionality and implementing file upload and export features to enhance performance.</li>
+                <li>Played a key role in integrating components developed by teammates, ensuring a cohesive user experience in the final application.</li>
+                <li>Collaborated on a comprehensive technical document over four months, outlining detailed requirements, roadmaps, diagrams, and planning that guided the application’s development.</li>
             </ul>
         </article>
         <article>
@@ -72,9 +84,9 @@
                 <a target="_blank" href="saffire_isles.pdf">PDF</a> </h3>
             <p class = "sub-header">Game Design Project | September 2022 - December 2022</p>
             <ul>
-                <li>I developed this document as a project for UPEI Videogame Design course.</li>
-                <li>I created the project with a focus on documentation and an understanding of the core concepts associated with game design.</li>
-            </ul>
+                <li>Developed a comprehensive design document for "The Sapphire Isles," a player-centric storytelling game, as a project for my Videogame Design course at UPEI.</li>
+                <li>Focused on thorough documentation and a solid understanding of core game design concepts, detailing the game's history, philosophy, features, and gameplay mechanics.</li>
+            </ul>            
         </article>
         <article>
             <h3>Grocery Keeper Mobile Application - 
@@ -82,10 +94,11 @@
                  - <a href="portfolio_examples.html#grocery-keeper">Examples</a></h3>
             <p class = "sub-header">Android Application | January 2023 – April 2023</p>
             <ul>
-                <li>Developed an android application in a group of 3 students.</li>
-                <li>Used Dart, Flutter, Web Scraping, OOP, GitHub.</li>
-                <li>Designed to track user-generated grocery lists and suggest sale locations for desired items.</li>
-            </ul>
+                <li>Developed an Android application as part of a team of three students during the winter semester of 2023.</li>
+                <li>The app tracks user-generated grocery lists and suggests sale locations for desired items based on price comparisons.</li>
+                <li>Utilized Dart, Flutter, web scraping, object-oriented programming (OOP), and GitHub for version control.</li>
+                <li>Contributed primarily by developing an efficient web-scraping tool to identify relevant item prices and recommend them to users.</li>
+            </ul>            
         </article>
         <article>
             <h3>Website Prototype - 
@@ -93,37 +106,42 @@
                  - <a target="_blank" href="old_coding_tutoring_website/index.html">Link</a></h3>
             <p class = "sub-header">Website | 2022</p>
             <ul>
-                <li>An old project I made while learning HTML</li>
-                <li>Featured a simple database and form submission (now removed)</li>
+                <li>An experimental coding tutor website created while learning HTML, titled "Lazer Focus Coding."</li>
+                <li>Featured functionality for form submission and storage of account data using hash encoding.</li>
+                <li>Included a simple database (currently removed) to manage user accounts and submissions.</li>
             </ul>
+            
         </article>
     </section>
     
 
     <section id="experience">
         <h2>Work Experience</h2>
+
         <article>
-            <h3>Office Administrator - Cross Country Telecommunications</h3>
-            <p class = "sub-header">June 2024 – Present</p>
+            <h3>Office Administrator - Rogers Communications</h3>
+            <p class="sub-header">June 2024 – Present</p>
             <ul>
-                <li>During my time at Rogers, I have managed financial transactions and billing related issues for customers across Nova Scotia.</li>
-                <li>My responsibilities include managing accounts recievable, resolving customer issues related to billing, scheduling service and installation calls, and other administrative tasks.</li>
+                <li>Manage financial transactions and address billing-related issues for customers across Nova Scotia.</li>
+                <li>Oversee accounts receivable, resolve customer billing inquiries, schedule service and installation appointments, and perform various administrative tasks.</li>
             </ul>
         </article>
+
         <article>
             <h3>Coding Coach - Hatch Coding</h3>
-            <p class = "sub-header">June 2021 – April 2024</p>
+            <p class="sub-header">June 2021 – April 2024</p>
             <ul>
-                <li>During my time with Hatch Coding, I conducted online lessons for young coding students K-12, including group and private lessons.</li>
-                <li>The topics I taught included coding fundamentals, object-oriented programming, HTML/CSS web development, GitHub version control, Unity development, coding contest preparation, generative art, and other miscellaneous topics.</li>
+                <li>Delivered online coding lessons to K-12 students, conducting both group and individual sessions.</li>
+                <li>Taught a wide range of topics, including coding fundamentals, object-oriented programming, HTML/CSS web development, GitHub version control, Unity development, coding contest preparation, and generative art.</li>
             </ul>
         </article>
+
         <article>
-            <h3>Waiter - Callisters Country Kitchen</h3>
-            <p class = "sub-header">June 2021 – April 2024</p>
+            <h3>Waiter - Callister’s Country Kitchen</h3>
+            <p class="sub-header">June 2021 – April 2024</p>
             <ul>
-                <li>At Callister’s I performed many duties, including serving customers, taking orders, relaying information, doing light prep work, and delivering drinks and entrees. 
-                    I had to think quickly on my feet, have a positive attitude, and interface with customers. </li>
+                <li>Provided exceptional service to customers by taking orders, communicating information effectively, assisting with light food preparation, and delivering drinks and entrees.</li>
+                <li>Demonstrated strong problem-solving skills and maintained a positive attitude while interacting with patrons in a fast-paced environment.</li>
             </ul>
         </article>
     </section>
