@@ -39,9 +39,16 @@
   </script>
 </head>
 <body>
+    <div class="nav">
+      <a href="index.html">Home</a> |
+      <a href="forum.html">Forums</a> |
+      <a href="#">Stories</a> |
+      <a href="#">EVP Recordings</a> |
+      <a href="#">Links</a>
+    </div>
   <header>
     <h1>👻 The Paranormal Forum 👻</h1>
-    <p>Share your ghost stories, mysteries, and strange encounters.</p>
+    <p style="text-align:center;">Share your ghost stories, mysteries, and strange encounters.</p>
   </header>
 
   <nav>
@@ -49,6 +56,7 @@
     <button onclick="filterPosts('ghost')">Ghosts</button>
     <button onclick="filterPosts('mystery')">Mysteries</button>
     <button onclick="filterPosts('occult')">Occult</button>
+    <br>
     <button onclick="sortPosts('newest')">Sort: Newest</button>
     <button onclick="sortPosts('oldest')">Sort: Oldest</button>
   </nav>
@@ -56,10 +64,10 @@
   <main id="posts">
 
     <!-- Post 1 -->
-    <div class="post" data-date="2025-09-10" data-tag="ghost">
+    <div class="post" data-date="2025-09-10" data-tag="ghost mystery">
       <h2 onclick="togglePost('p1')">Strange Lights in the Cemetery</h2>
+      <p><strong>User:</strong> Ubermaxxxer | <strong>Date:</strong> 2025-09-10 | <strong>Tags:</strong> ghost, mystery</p>
       <div class="content" id="p1">
-        <p><strong>Posted:</strong> Sept 10, 2025 | <strong>Tags:</strong> ghost</p>
         <p>Last night I saw flickering blue lights between the headstones…</p>
 
         <div class="comments">
@@ -67,6 +75,8 @@
           <ul>
             <li><strong>NightWatcher:</strong> I’ve seen them too, could be spirit orbs!</li>
             <li><strong>Seeker:</strong> Sounds like foxfire, but who knows…</li>
+            <li>└───▶<strong>Seeker:</strong> Sounds like foxfire, but who knows…</li>
+            <li>&emsp;&emsp;&emsp;└───▶<strong>Dipthong:</strong> No, it's probably ur mom</li>
           </ul>
         </div>
       </div>
@@ -75,8 +85,8 @@
     <!-- Post 2 -->
     <div class="post" data-date="2025-08-22" data-tag="mystery">
       <h2 onclick="togglePost('p2')">The Locked Room Puzzle</h2>
+      <p><strong>Posted:</strong> Aug 22, 2025 | <strong>Tags:</strong> mystery</p>
       <div class="content" id="p2">
-        <p><strong>Posted:</strong> Aug 22, 2025 | <strong>Tags:</strong> mystery</p>
         <p>I heard a story about a man who disappeared from a locked room. No windows, no exits…</p>
 
         <div class="comments">
@@ -92,8 +102,8 @@
     <!-- Post 3 -->
     <div class="post" data-date="2025-07-05" data-tag="occult">
       <h2 onclick="togglePost('p3')">Radio Static Voices</h2>
+      <p><strong>Posted:</strong> Jul 5, 2025 | <strong>Tags:</strong> occult</p>
       <div class="content" id="p3">
-        <p><strong>Posted:</strong> Jul 5, 2025 | <strong>Tags:</strong> occult</p>
         <p>Someone told me that if you tune an old shortwave radio just right, you can hear whispers…</p>
 
         <div class="comments">

@@ -127,3 +127,8 @@ nav button:hover {
   margin: 0.3em 0;
   color: #cccccc;
 }
+
+
+.content.open {
+  display: block;
+}
