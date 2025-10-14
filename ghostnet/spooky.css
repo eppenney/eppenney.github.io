@@ -111,6 +111,7 @@ nav button:hover {
   margin-top: 1em;
   border-top: 1px dashed #00ffcc;
   padding-top: 0.5em;
+  
 }
 
 .comments h3 {
@@ -126,8 +127,27 @@ nav button:hover {
 .comments li {
   margin: 0.3em 0;
   color: #cccccc;
+  text-indent: -0.75em;   /* pull username label back */
+  padding-left: 0.75em;   /* push full line forward */
 }
 
+.comments li.reply {
+  text-indent: -3.75em;   /* pull username label back */
+  padding-left: 3.75em;   /* push full line forward */
+}
+
+.comments li.reply::before {
+  content: "└───▶";
+  flex-shrink: 0;
+}
+
+.comments li.reply strong {
+  margin: 0;
+}
+
+.comments li.depth-1 { margin-left: 0.5em; }
+.comments li.depth-2 { margin-left: 3.0em; }
+.comments li.depth-3 { margin-left: 6.0em; }
 
 .content.open {
   display: block;
