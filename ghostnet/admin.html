@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostNet Admin Portal</title>
+  <link rel="stylesheet" href="spooky.css">
+  <script>
+    // Expand/collapse deleted post
+    function toggleDeleted(id) {
+      const post = document.getElementById(id);
+      post.classList.toggle("open");
+    }
+
+    // Simple password gate
+    function checkPass() {
+      const input = document.getElementById('adminPass').value;
+      const correct = "specter"; // change as desired
+      if (input === correct) {
+        document.getElementById('login').style.display = "none";
+        document.getElementById('admin-panel').style.display = "block";
+      } else {
+        document.getElementById('error').textContent = "Access denied.";
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="nav">
+    <a href="index.html">Home</a> |
+    <a href="forum.html">Forums</a> |
+    <a href="404.html">EVP Recordings</a> |
+    <a href="admin.html">Admin</a>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div class="admin-container" id="login">
+    <h2>Admin Access</h2>
+    <p>Enter password to continue:</p>
+    <input type="password" id="adminPass" placeholder="********">
+    <br>
+    <button onclick="checkPass()">Enter</button>
+    <p id="error" style="color:#ff0066;"></p>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="container" id="admin-panel" style="display:none;">
+    <h2>Deleted Posts Archive</h2>
+    <p style="text-align:center; color:#ff0066;">Click a post to expand details.</p>
+
+    <main id="deleted-posts">
+      <!-- Post 1 -->
+      <div class="post" data-tag="deleted">
+        <h2 onclick="toggleDeleted('d1')">Post #142 — EVP in the Church Basement</h2>
+        <div class="content" id="d1">
+          <p>Removed for user privacy. Logs indicate strange waveform in upload metadata.</p>
+          <div class="comments">
+            <h3>Moderator Notes</h3>
+            <ul>
+              <li><strong>[KnotaFed]</strong> Redacted due to possible identifying data in audio spectrogram.</li>
+              <li><strong>[Phasmoid]</strong> Confirmed anomaly. No trace in server logs post-deletion.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post 2 -->
+      <div class="post" data-tag="deleted">
+        <h2 onclick="toggleDeleted('d2')">Post #139 — Something in the Lake Recordings</h2>
+        <div class="content" id="d2">
+          <p>Content flagged and removed automatically. No user data remaining.</p>
+          <div class="comments">
+            <h3>Moderator Notes</h3>
+            <ul>
+              <li><strong>[FoggyNelson]</strong> AI filter flagged “distortion event.” Reviewing algorithm.</li>
+              <li><strong>[ConduitionalPoet]</strong> Thread reappeared briefly before final purge.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post 3 -->
+      <div class="post" data-tag="deleted">
+        <h2 onclick="toggleDeleted('d3')">Post #128 — HELP ME FIND HER</h2>
+        <div class="content" id="d3">
+          <p>Thread manually purged. Message body partially corrupted.</p>
+          <div class="comments">
+            <h3>Moderator Notes</h3>
+            <ul>
+              <li><strong>[KnotaFed]</strong> Recovered header data shows timestamps from 1982.</li>
+              <li><strong>[Phasmoid]</strong> Possible merge from archive tape? Not reproducible.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ADMIN CHAT SECTION -->
+    <section class="forum-section" style="margin-top:40px;">
+      <h2>Admin Chat Log</h2>
+      <div class="admin-chat" style="max-height:250px; overflow-y:auto;">
+        <div class="chat-message"><strong>[KnotaFed]</strong> Deleted thread 128. Something was wrong with that one.</div>
+        <div class="chat-message"><strong>[FoggyNelson]</strong> Wrong how?</div>
+        <div class="chat-message"><strong>[KnotaFed]</strong> The timestamps didn’t line up. Log said it was posted in 1982.</div>
+        <div class="chat-message"><strong>[ConduitionalPoet]</strong> That’s before GhostNet even existed.</div>
+        <div class="chat-message"><strong>[Phasmoid]</strong> Leave it. Some things aren’t meant to be restored.</div>
+        <div class="chat-message"><strong>[FoggyNelson]</strong> Archive checksum mismatch again. I’m done for the night.</div>
+        <div class="chat-message"><strong>[KnotaFed]</strong> Copy that. Locking admin panel until next sync.</div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
