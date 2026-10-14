@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIRECTORATE TRANSMISSION ARRAY — TARGET LOCK</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600;700&family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Fira Code', monospace;
+      background-color: #050807;
+      color: #34d399;
+      overflow-x: hidden;
+    }
+
+    /* Subtle CRT Scanline overlay */
+    .scanlines {
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.35) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 40;
+    }
+
+    /* Ambient CRT Flicker */
+    @keyframes crtFlicker {
+      0% { opacity: 0.97; }
+      50% { opacity: 1; }
+      100% { opacity: 0.98; }
+    }
+
+    .crt-container {
+      animation: crtFlicker 0.15s infinite;
+    }
+
+    /* Glow text utilities */
+    .text-glow {
+      text-shadow: 0 0 8px rgba(52, 211, 153, 0.6), 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .border-glow {
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.15), inset 0 0 15px rgba(16, 185, 129, 0.05);
+    }
+
+    /* Smooth Symbol Shifting Transition */
+    .symbol-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .symbol-shift {
+      transform: scale(0.85) rotateX(90deg);
+      opacity: 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 crt-container relative select-none">  
+  <!-- Scanline Overlay Layer -->
+  <div class="pointer-events-none fixed inset-0 scanlines"></div>
+
+  <!-- Header Section with Navigation Tabs -->
+  <header class="w-full max-w-4xl text-center mt-2 border-b border-emerald-900/60 pb-4">
+    <div class="flex justify-between items-center text-[10px] sm:text-xs tracking-widest text-emerald-700 uppercase mb-3">
+      <span>SYS_VER: 433.09</span>
+      <span class="animate-pulse flex items-center gap-1.5">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+        FREQ_SYNC_ACTIVE
+      </span>
+      <span>LOC: SECTOR-07</span>
+    </div>
+
+    <h1 class="text-xl sm:text-2xl font-bold tracking-widest text-emerald-400 text-glow font-['Cinzel'] uppercase">
+      Directorate Transmission Array
+    </h1>
+    <p class="text-xs text-emerald-600 mt-1 tracking-wider uppercase">
+      TARGET LOCK // ENCRYPTED SEQUENCE DISPLAY
+    </p>
+  </header>
+
+  <!-- Main Display Area -->
+<main class="w-full max-w-5xl flex-1 py-6 flex flex-col items-center justify-center">    
+    <!-- Timer & Sync Progress Section -->
+    <div class="w-full max-w-md mb-8 flex flex-col items-center">
+      <div class="flex justify-between w-full text-xs text-emerald-500/80 mb-2 font-mono uppercase tracking-wider">
+        <span>Cycle Interval: 15s</span>
+        <span>Shift in: <span id="timer-text" class="text-emerald-400 font-bold">15.0</span>s</span>
+      </div>
+      <!-- Progress Bar Track -->
+      <div class="w-full h-1.5 bg-emerald-950/80 rounded-full overflow-hidden border border-emerald-800/40 p-0.5">
+        <div id="progress-bar" class="h-full bg-emerald-400 rounded-full transition-all duration-100 ease-linear shadow-[0_0_8px_#34d399]"></div>
+      </div>
+    </div>
+
+    <!-- Target Code Symbol Display Grid -->
+    <div id="cipher-grid" class="flex flex-wrap justify-center gap-4 sm:gap-6 w-full max-w-4xl px-2">
+      <!-- Generated via JavaScript -->
+    </div>
+
+  </main>
+
+  <!-- Footer / Status Metadata -->
+  <footer class="w-full max-w-4xl border-t border-emerald-900/60 pt-4 mb-2 text-center">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[10px] text-emerald-700 tracking-widest uppercase">
+      <div>ENCRYPTION: SHIFT_SEED_PRNG</div>
+      <div>EPOCH_TIME: <span id="epoch-time">0000000000</span></div>
+      <div>MODE: <span class="text-emerald-500 font-bold">TARGET_LOCK</span></div>
+    </div>
+  </footer>
+
+  <script>
+    /**
+     * TARGET CODE CONFIGURATION
+     * Set this variable to any numeric code sequence.
+     */
+    const TARGET_CODE = "4812";
+
+    /**
+     * Shared Pool of 32 Esoteric Symbols
+     */
+    const ESOTERIC_SYMBOL_POOL = [
+      // Alchemical
+      "🜁", "🝔", "🜂", "🜄", "🜏", "🜔", "🜛", "🜟", "🜡", "🜬", "🜓", "🜞", "🜍", "🜠",
+      // Runic
+      "ᚠ", "ᚢ", "ᚦ", "ᚨ", "ᚱ", "ᚲ", "ᚷ", "ᚹ", "ᚺ", "ᚾ", "ᛁ", "ᛃ", "ᛈ", "ᛉ",
+      // Astrological
+      "♁", "♃", "♄", "♅"
+    ];
+
+    const INTERVAL_MS = 15000;
+    let lastSeed = -1;
+
+    function pseudoRandom(seed) {
+      const x = Math.sin(seed++) * 10000;
+      return x - Math.floor(x);
+    }
+
+    function getShuffledSymbolsForSeed(seed) {
+      const poolCopy = [...ESOTERIC_SYMBOL_POOL];
+      let currentSeed = seed;
+
+      for (let i = poolCopy.length - 1; i > 0; i--) {
+        const rand = pseudoRandom(currentSeed++);
+        const j = Math.floor(rand * (i + 1));
+        [poolCopy[i], poolCopy[j]] = [poolCopy[j], poolCopy[i]];
+      }
+
+      const mapping = {};
+      for (let digit = 0; digit <= 9; digit++) {
+        mapping[digit.toString()] = poolCopy[digit];
+      }
+      return mapping;
+    }
+
+    function buildGrid() {
+      const grid = document.getElementById("cipher-grid");
+      grid.innerHTML = "";
+      for (let i = 0; i < TARGET_CODE.length; i++) {
+        const card = document.createElement("div");
+        card.className = "flex flex-col items-center bg-emerald-950/30 border border-emerald-800/50 rounded-xl p-4 sm:p-6 min-w-[80px] sm:min-w-[120px] flex-1 max-w-[150px] border-glow backdrop-blur-sm shadow-lg";
+        card.innerHTML = `
+          <div class="text-xs text-emerald-600 font-mono mb-2 tracking-widest uppercase">SLOT-${i + 1}</div>
+          <div id="symbol-slot-${i}" class="symbol-card text-4xl sm:text-6xl text-emerald-400 font-bold my-3 text-glow">
+            ?
+          </div>
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    function updateLoop() {
+      const now = Date.now();
+      const currentIntervalSeed = Math.floor(now / INTERVAL_MS);
+      const elapsedInInterval = now % INTERVAL_MS;
+      const remainingMs = INTERVAL_MS - elapsedInInterval;
+
+      document.getElementById("progress-bar").style.width = `${(remainingMs / INTERVAL_MS) * 100}%`;
+      document.getElementById("timer-text").innerText = (remainingMs / 1000).toFixed(1);
+      document.getElementById("epoch-time").innerText = Math.floor(now / 1000);
+
+      if (currentIntervalSeed !== lastSeed) {
+        lastSeed = currentIntervalSeed;
+        const currentMapping = getShuffledSymbolsForSeed(currentIntervalSeed);
+
+        for (let i = 0; i < TARGET_CODE.length; i++) {
+          const char = TARGET_CODE[i];
+          const slot = document.getElementById(`symbol-slot-${i}`);
+          if (slot) {
+            slot.classList.add("symbol-shift");
+            setTimeout(() => {
+              slot.innerText = currentMapping[char] || char;
+              slot.classList.remove("symbol-shift");
+            }, 150);
+          }
+        }
+      }
+
+      requestAnimationFrame(updateLoop);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      buildGrid();
+      requestAnimationFrame(updateLoop);
+    });
+  </script>
+</body>
+</html>
