@@ -1,0 +1,56 @@
+<div class="test-puzzle-container" style="padding: 20px; font-family: monospace; color: #00ff66;">
+  <h3 style="margin-top: 0; border-bottom: 1px solid #00ff66; padding-bottom: 5px;">
+    DIAGNOSTIC CALIBRATION :: METER SYNC
+  </h3>
+
+  <p>Adjust meter to target output value before submitting lock sequence.</p>
+
+  <div style="margin: 20px 0; font-size: 1.2rem;">
+    <div>TARGET: <span id="target-val">5</span></div>
+    <div>CURRENT METER: [<span id="meter-val">0</span>]</div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <button id="btn-increment" style="background: #002200; color: #00ff66; border: 1px solid #00ff66; padding: 8px 16px; font-family: monospace; cursor: pointer; margin-right: 10px;">
+      +1 INCREMENT
+    </button>
+    <button id="btn-reset" style="background: #220000; color: #ff3333; border: 1px solid #ff3333; padding: 8px 16px; font-family: monospace; cursor: pointer;">
+      RESET
+    </button>
+  </div>
+
+  <button id="btn-submit" style="background: #003311; color: #00ff66; border: 1px solid #00ff66; padding: 10px 24px; font-family: monospace; cursor: pointer; font-weight: bold;">
+    SUBMIT DIAGNOSTIC
+  </button>
+</div>
+
+<script>
+  (function() {
+    const target = 5;
+    let currentMeter = 0;
+
+    const meterDisplay = document.getElementById('meter-val');
+    const btnIncrement = document.getElementById('btn-increment');
+    const btnReset = document.getElementById('btn-reset');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    btnIncrement.addEventListener('click', () => {
+      currentMeter++;
+      meterDisplay.textContent = currentMeter;
+    });
+
+    btnReset.addEventListener('click', () => {
+      currentMeter = 0;
+      meterDisplay.textContent = currentMeter;
+    });
+
+    btnSubmit.addEventListener('click', () => {
+      // Dynamic state resolution
+      if (currentMeter === target) {
+        window.completePuzzleModule('puzzle_success');
+      } else {
+        window.completePuzzleModule('puzzle_fail');
+      }
+    });
+  })();
+</script>

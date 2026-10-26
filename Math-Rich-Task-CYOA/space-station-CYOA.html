@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMBINED FACILITY OUTER-11 | TERMINAL ACCESS</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #terminal-body {
+      scroll-behavior: smooth;
+    }
+    .spacer-block {
+      min-height: 70vh; /* Runway for state top-alignment */
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="crt-screen" id="crt">
+    <div id="terminal-body">
+      <div id="terminal-content"></div>
+      <div class="spacer-block" id="bottom-spacer"></div>
+    </div>
+    <div id="module-viewport" style="display: none;"></div>
+    <div class="input-line" id="input-container">
+      <span class="prompt-label">&gt;</span>
+      <input type="text" id="command-input" autocomplete="off" autofocus spellcheck="false">
+    </div>
+  </div>
+
+  <script>
+const terminalBody = document.getElementById('terminal-body');
+    const terminalContent = document.getElementById('terminal-content');
+    const commandInput = document.getElementById('command-input');
+    const crtScreen = document.getElementById('crt');
+    const moduleViewport = document.getElementById('module-viewport');
+    const inputContainer = document.getElementById('input-container');
+
+    // Engine State
+    let scenarioData = null;
+    let currentStateId = null;
+    let isTyping = false;
+
+    // Reset Confirmation State
+    let pendingReset = false;
+
+    // Local Storage Key
+    const SAVE_KEY = 'outer11_terminal_save';
+
+    // Line Timing Controls (milliseconds)
+    const BASE_LINE_DELAY = 60;
+    const RANDOM_VARIANCE = 40;
+
+    function normalizeCommand(str) {
+      if (!str) return '';
+      return str.toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
+    function scrollToTextBottom() {
+      const contentBottom = terminalContent.offsetTop + terminalContent.offsetHeight;
+      const viewportHeight = terminalBody.clientHeight;
+      
+      if (contentBottom > terminalBody.scrollTop + viewportHeight) {
+        terminalBody.scrollTop = contentBottom - viewportHeight + 40;
+      }
+    }
+
+    function scrollToElementTop(element) {
+      if (!element) return;
+      terminalBody.scrollTop = element.offsetTop - 10;
+    }
+
+    function saveGameState() {
+      if (!currentStateId) return;
+      const payload = {
+        currentStateId: currentStateId,
+        historyHTML: terminalContent.innerHTML,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+    }
+
+    function loadGameState() {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error("Save state corruption detected:", e);
+        return null;
+      }
+    }
+
+    function printLines(lines, index = 0, alignTop = false, anchorElement = null, callback = null) {
+      if (index < lines.length) {
+        isTyping = true;
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.textContent = lines[index];
+        terminalContent.appendChild(entry);
+
+        const currentAnchor = anchorElement || entry;
+
+        if (alignTop) {
+          if (index === 0) {
+            scrollToElementTop(currentAnchor);
+          }
+        } else {
+          scrollToTextBottom();
+        }
+
+        const randomDelay = BASE_LINE_DELAY + Math.floor(Math.random() * RANDOM_VARIANCE);
+        setTimeout(() => printLines(lines, index + 1, alignTop, currentAnchor, callback), randomDelay);
+      } else {
+        isTyping = false;
+        saveGameState();
+        if (callback) callback();
+      }
+    }
+
+    function appendUserMessage(msg) {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry user-entry';
+      entry.textContent = '> ' + msg;
+      terminalContent.appendChild(entry);
+      scrollToTextBottom();
+      saveGameState();
+    }
+
+    function appendSystemResponse(lines) {
+      const lineArray = Array.isArray(lines) ? lines : [lines];
+      printLines(lineArray, 0, false);
+    }
+
+    async function loadPuzzleModule(targetUrl, nextStateOnComplete) {
+      try {
+        const response = await fetch(targetUrl);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const html = await response.text();
+
+        terminalBody.style.display = 'none';
+        inputContainer.style.display = 'none';
+        moduleViewport.style.display = 'block';
+        moduleViewport.innerHTML = html;
+
+        moduleViewport.dataset.nextState = nextStateOnComplete || '';
+
+        const scripts = moduleViewport.querySelectorAll('script');
+        scripts.forEach(oldScript => {
+          const newScript = document.createElement('script');
+          Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+          newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+          oldScript.parentNode.replaceChild(newScript, oldScript);
+        });
+
+      } catch (err) {
+        console.error("Failed to load puzzle component:", err);
+        appendSystemResponse(`[SYSTEM ERROR]: Unable to fetch diagnostic module at '${targetUrl}'.`);
+      }
+    }
+
+    window.completePuzzleModule = function(overrideNextState = null) {
+      const nextState = overrideNextState || moduleViewport.dataset.nextState;
+      moduleViewport.innerHTML = '';
+      moduleViewport.style.display = 'none';
+      terminalBody.style.display = 'block';
+      inputContainer.style.display = 'flex';
+      commandInput.focus();
+
+      if (nextState) {
+        transitionToState(nextState);
+      }
+    };
+
+    function transitionToState(stateId) {
+      if (!scenarioData || !scenarioData.states[stateId]) {
+        appendSystemResponse(`[FATAL ERROR]: Invalid state node reference '${stateId}'.`);
+        return;
+      }
+
+      currentStateId = stateId;
+      const state = scenarioData.states[stateId];
+
+      if (state.type === 'redirect') {
+        if (state.fallbackText) {
+          appendSystemResponse(state.fallbackText);
+        }
+        setTimeout(() => {
+          loadPuzzleModule(state.targetUrl, state.nextState);
+        }, 1000);
+        return;
+      }
+
+      if (state.content && Array.isArray(state.content)) {
+        printLines(state.content, 0, true);
+      } else {
+        saveGameState();
+      }
+    }
+
+    function processCommand(rawInput) {
+      const normalizedInput = normalizeCommand(rawInput);
+
+      // Handle active reset confirmation prompt
+      if (pendingReset) {
+        pendingReset = false; // Clear flag regardless of choice
+        if (['y', 'yes', 'confirm'].includes(normalizedInput)) {
+          localStorage.removeItem(SAVE_KEY);
+          terminalContent.innerHTML = '';
+          appendSystemResponse([
+            "[SYSTEM]: Memory buffer cleared.",
+            "Re-initializing terminal state..."
+          ]);
+          setTimeout(() => {
+            transitionToState(scenarioData.initialState || 'welcome');
+          }, 800);
+        } else {
+          appendSystemResponse("[SYSTEM LOG]: Memory purge sequence aborted.");
+        }
+        return;
+      }
+
+      // Trigger reset confirmation state
+      if (['resetstate', 'reset', 'clearsave', 'purge'].includes(normalizedInput)) {
+        pendingReset = true;
+        appendSystemResponse([
+          "--------------------------------------------------------------------",
+          "[WARNING]: Initiate full purge of local system state buffer?",
+          "All saved progression will be erased.",
+          "CONFIRM PURGE? (Y / N)",
+          "--------------------------------------------------------------------"
+        ]);
+        return;
+      }
+
+      const currentState = scenarioData.states[currentStateId];
+
+      if (!currentState || !currentState.commands) {
+        appendSystemResponse(scenarioData.defaultUnrecognized || `[UNRECOGNIZED DIRECTIVE]: '${rawInput}'`);
+        return;
+      }
+
+      const matchedCommand = currentState.commands.find(cmd => 
+        cmd.input && cmd.input.some(alias => normalizeCommand(alias) === normalizedInput)
+      );
+
+      if (!matchedCommand) {
+        const fallbackMsg = scenarioData.defaultUnrecognized 
+          ? scenarioData.defaultUnrecognized.replace('%INPUT%', rawInput)
+          : `[UNRECOGNIZED DIRECTIVE]: '${rawInput}'. Type 'help' for options.`;
+        appendSystemResponse(fallbackMsg);
+        return;
+      }
+
+      switch (matchedCommand.type) {
+        case 'text':
+          appendSystemResponse(matchedCommand.response);
+          break;
+
+        case 'state':
+          transitionToState(matchedCommand.nextState);
+          break;
+
+        case 'redirect':
+          if (matchedCommand.fallbackText) {
+            appendSystemResponse(matchedCommand.fallbackText);
+          }
+          setTimeout(() => {
+            loadPuzzleModule(matchedCommand.targetUrl, matchedCommand.nextState);
+          }, 1000);
+          break;
+
+        default:
+          appendSystemResponse(`[SYSTEM LOG]: Command executed.`);
+          break;
+      }
+    }
+
+    commandInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const inputVal = commandInput.value.trim();
+        if (inputVal === '' || isTyping) return;
+
+        commandInput.value = '';
+        appendUserMessage(inputVal);
+
+        setTimeout(() => {
+          processCommand(inputVal);
+        }, 100);
+      }
+    });
+
+    crtScreen.addEventListener('click', () => {
+      if (moduleViewport.style.display === 'none') {
+        commandInput.focus();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      fetch('scenario-1.json')
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          return response.json();
+        })
+        .then(data => {
+          scenarioData = data;
+          if (data.title) document.title = data.title;
+
+          const saved = loadGameState();
+          if (saved && saved.currentStateId && scenarioData.states[saved.currentStateId]) {
+            terminalContent.innerHTML = saved.historyHTML;
+            currentStateId = saved.currentStateId;
+            appendSystemResponse(["", "[SYSTEM]: Session automatically restored from local buffer."]);
+          } else {
+            transitionToState(data.initialState || 'welcome');
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load scenario data:', err);
+          appendSystemResponse([
+            '[SYSTEM ERROR]: Unable to establish connection to scenario data pipeline.',
+            'Ensure scenario-1.json exists in working directory and server is active.'
+          ]);
+        });
+    });
+  </script>
+</body>
+</html>

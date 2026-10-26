@@ -1,0 +1,117 @@
+{
+  "title": "Combined Facility Outer-11 System Diagnostic",
+  "initialState": "welcome",
+  "defaultUnrecognized": "[UNRECOGNIZED DIRECTIVE]: Command not recognized by local sub-routine. Type 'help' for available overrides.",
+  "states": {
+    "welcome": {
+      "type": "text",
+      "content": [
+        "====================================================================",
+        " ____ ____  _   _ _____ _____ _   _ _____ ____   ",
+        "/ ___/ ___|| | | |_   _| ____| \\ | | ____|  _ \\  ",
+        "| |  | |  _ | | | | | | |  _| |  \\| |  _| | | | | ",
+        "| |__| |_| || |_| | | | | |___| |\\  | |___| |_| | ",
+        " \\____\\____| \\___/  |_| |_____|_| \\_|_____|____/  ",
+        "                                                    ",
+        " COMBINED FACILITY OUTER-11 :: DIAGNOSTIC TERMINAL",
+        " SYSTEM VERSION 4.09.2a -- RESTRICTED ENTRY POINT",
+        "====================================================================",
+        "",
+        "[SYSTEM] Initializing telemetry links... OK",
+        "[SYSTEM] Primary power bus status: NOMINAL (UNSTABLE OFFSET DETECTED)",
+        "[SYSTEM] Authorization protocol engaged.",
+        "",
+        "Welcome, Engineer.",
+        "Authentication terminal online. Please log your command or credentials below.",
+        "Type 'help' to review basic operational parameters."
+      ],
+      "commands": [
+        {
+          "input": ["help", "info", "?"],
+          "type": "text",
+          "response": [
+            "[SYSTEM LOG]: Terminal running restricted operational sub-routine.",
+            "Available commands:",
+            "  - 'status' : Check primary deck telemetry.",
+            "  - 'puzzles' : Open manual circuit diagnostic interface."
+          ]
+        },
+        {
+          "input": ["status", "check status", "1"],
+          "type": "state",
+          "nextState": "deck_status"
+        },
+        {
+          "input": ["puzzles", "override", "2"],
+          "type": "redirect",
+          "targetUrl": "puzzles/test.html",
+          "fallbackText": "[SYSTEM]: Rerouting command pipeline to sub-system diagnostic canvas..."
+        }
+      ]
+    },
+    "deck_status": {
+      "type": "text",
+      "content": [
+        "--------------------------------------------------------------------",
+        "FACILITY TELEMETRY SUMMARY :: DECK 03",
+        "--------------------------------------------------------------------",
+        "[ALERT] Sub-station 3 auxiliary power draw fluctuating.",
+        "Linear offset detected in pressure distribution relays.",
+        "",
+        "Type 'return' to go back to primary authentication screen, or 'override' to launch diagnostic module."
+      ],
+      "commands": [
+        {
+          "input": ["return", "back"],
+          "type": "state",
+          "nextState": "welcome"
+        },
+        {
+          "input": ["override", "puzzles"],
+          "type": "redirect",
+          "targetUrl": "puzzles/test.html",
+          "fallbackText": "[SYSTEM]: Transferring control to physical line diagnostic board..."
+        }
+      ]
+    },
+    "puzzle_success": {
+      "type": "text",
+      "content": [
+        "--------------------------------------------------------------------",
+        "[DIAGNOSTIC PASSED]: Meter baseline synchronized.",
+        "Sub-station auxiliary relay locked to nominal parameters.",
+        "--------------------------------------------------------------------",
+        "Type 'welcome' to return to main terminal interface."
+      ],
+      "commands": [
+        {
+          "input": ["welcome", "return", "1"],
+          "type": "state",
+          "nextState": "welcome"
+        }
+      ]
+    },
+    "puzzle_fail": {
+      "type": "text",
+      "content": [
+        "--------------------------------------------------------------------",
+        "[DIAGNOSTIC FAILED]: Imbalance detected in signal meter.",
+        "Overload threshold triggered. Calibration sequence aborted.",
+        "--------------------------------------------------------------------",
+        "Type 'retry' to re-attempt calibration or 'welcome' to exit."
+      ],
+      "commands": [
+        {
+          "input": ["retry", "1"],
+          "type": "redirect",
+          "targetUrl": "puzzles/test.html"
+        },
+        {
+          "input": ["welcome", "return", "2"],
+          "type": "state",
+          "nextState": "welcome"
+        }
+      ]
+    }
+  }
+}
