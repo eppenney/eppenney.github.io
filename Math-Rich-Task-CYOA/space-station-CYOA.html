@@ -30,7 +30,7 @@
   </div>
 
   <script>
-const terminalBody = document.getElementById('terminal-body');
+    const terminalBody = document.getElementById('terminal-body');
     const terminalContent = document.getElementById('terminal-content');
     const commandInput = document.getElementById('command-input');
     const crtScreen = document.getElementById('crt');
@@ -41,6 +41,9 @@ const terminalBody = document.getElementById('terminal-body');
     let scenarioData = null;
     let currentStateId = null;
     let isTyping = false;
+
+    // Global Flag System (Default includes new_message_1)
+    let gameFlags = ["new_message_1"];
 
     // Reset Confirmation State
     let pendingReset = false;
@@ -55,6 +58,26 @@ const terminalBody = document.getElementById('terminal-body');
     function normalizeCommand(str) {
       if (!str) return '';
       return str.toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
+    // Flag Helper Functions
+    function hasFlag(flagName) {
+      return gameFlags.includes(flagName);
+    }
+
+    function addFlag(flagName) {
+      if (!gameFlags.includes(flagName)) {
+        gameFlags.push(flagName);
+      }
+    }
+
+    function removeFlag(flagName) {
+      gameFlags = gameFlags.filter(f => f !== flagName);
+    }
+
+    function applyFlagChanges(setFlags = [], removeFlags = []) {
+      if (Array.isArray(setFlags)) setFlags.forEach(addFlag);
+      if (Array.isArray(removeFlags)) removeFlags.forEach(removeFlag);
     }
 
     function scrollToTextBottom() {
@@ -76,6 +99,7 @@ const terminalBody = document.getElementById('terminal-body');
       const payload = {
         currentStateId: currentStateId,
         historyHTML: terminalContent.innerHTML,
+        gameFlags: gameFlags,
         timestamp: Date.now()
       };
       localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
@@ -160,7 +184,9 @@ const terminalBody = document.getElementById('terminal-body');
       }
     }
 
-    window.completePuzzleModule = function(overrideNextState = null) {
+    window.completePuzzleModule = function(overrideNextState = null, setFlags = [], removeFlags = []) {
+      applyFlagChanges(setFlags, removeFlags);
+
       const nextState = overrideNextState || moduleViewport.dataset.nextState;
       moduleViewport.innerHTML = '';
       moduleViewport.style.display = 'none';
@@ -193,7 +219,36 @@ const terminalBody = document.getElementById('terminal-body');
       }
 
       if (state.content && Array.isArray(state.content)) {
-        printLines(state.content, 0, true);
+        let linesToPrint = [...state.content];
+
+        if (state.dynamicLines && Array.isArray(state.dynamicLines)) {
+          state.dynamicLines.forEach(item => {
+            if (item.token) {
+              const lineIndex = linesToPrint.indexOf(item.token);
+              if (lineIndex !== -1) {
+                let chosenText = item.defaultText || '';
+
+                if (item.rules && Array.isArray(item.rules)) {
+                  for (const rule of item.rules) {
+                    const flagList = Array.isArray(rule.flags) ? rule.flags : [rule.flags];
+                    const match = rule.condition === 'all' 
+                      ? flagList.every(hasFlag) 
+                      : flagList.some(hasFlag);
+
+                    if (match) {
+                      chosenText = rule.text;
+                      break;
+                    }
+                  }
+                }
+
+                linesToPrint[lineIndex] = chosenText;
+              }
+            }
+          });
+        }
+
+        printLines(linesToPrint, 0, true);
       } else {
         saveGameState();
       }
@@ -202,11 +257,36 @@ const terminalBody = document.getElementById('terminal-body');
     function processCommand(rawInput) {
       const normalizedInput = normalizeCommand(rawInput);
 
+      // --- DEV COMMANDS ---
+      if (['devhelp', 'dev-help', 'dev'].includes(normalizedInput)) {
+        appendSystemResponse([
+          "--------------------------------------------------------------------",
+          "[DEV UTILITY CONSOLE]:",
+          "  - 'flags' / 'showflags' : Display all currently active game flags.",
+          "  - 'reset' / 'resetstate': Purge local save buffer and reboot.",
+          "--------------------------------------------------------------------"
+        ]);
+        return;
+      }
+
+      if (['flags', 'showflags', 'getflags'].includes(normalizedInput)) {
+        if (gameFlags.length === 0) {
+          appendSystemResponse("[DEV LOG]: Active Flags: [NONE]");
+        } else {
+          appendSystemResponse([
+            "[DEV LOG]: Active Flags:",
+            ...gameFlags.map(f => `  - ${f}`)
+          ]);
+        }
+        return;
+      }
+
       // Handle active reset confirmation prompt
       if (pendingReset) {
-        pendingReset = false; // Clear flag regardless of choice
+        pendingReset = false;
         if (['y', 'yes', 'confirm'].includes(normalizedInput)) {
           localStorage.removeItem(SAVE_KEY);
+          gameFlags = ["new_message_1"];
           terminalContent.innerHTML = '';
           appendSystemResponse([
             "[SYSTEM]: Memory buffer cleared.",
@@ -221,7 +301,6 @@ const terminalBody = document.getElementById('terminal-body');
         return;
       }
 
-      // Trigger reset confirmation state
       if (['resetstate', 'reset', 'clearsave', 'purge'].includes(normalizedInput)) {
         pendingReset = true;
         appendSystemResponse([
@@ -252,6 +331,26 @@ const terminalBody = document.getElementById('terminal-body');
         appendSystemResponse(fallbackMsg);
         return;
       }
+
+      // Check command flag prerequisites (ALL required)
+      if (matchedCommand.requiredFlags && !matchedCommand.requiredFlags.every(hasFlag)) {
+        appendSystemResponse(matchedCommand.fallbackResponse || "[ACCESS DENIED]: Required clearance or security key missing.");
+        return;
+      }
+
+      // Check command flag prerequisites (ANY required)
+      if (matchedCommand.requiredFlagsAny && !matchedCommand.requiredFlagsAny.some(hasFlag)) {
+        appendSystemResponse(matchedCommand.fallbackResponse || "[ACCESS DENIED]: Required clearance or security key missing.");
+        return;
+      }
+
+      if (matchedCommand.forbiddenFlags && matchedCommand.forbiddenFlags.some(hasFlag)) {
+        appendSystemResponse(matchedCommand.fallbackResponse || "[ACTION UNAVAILABLE]");
+        return;
+      }
+
+      // Apply flag modifications from command choice
+      applyFlagChanges(matchedCommand.setFlags, matchedCommand.removeFlags);
 
       switch (matchedCommand.type) {
         case 'text':
@@ -311,6 +410,9 @@ const terminalBody = document.getElementById('terminal-body');
           if (saved && saved.currentStateId && scenarioData.states[saved.currentStateId]) {
             terminalContent.innerHTML = saved.historyHTML;
             currentStateId = saved.currentStateId;
+            if (Array.isArray(saved.gameFlags)) {
+              gameFlags = saved.gameFlags;
+            }
             appendSystemResponse(["", "[SYSTEM]: Session automatically restored from local buffer."]);
           } else {
             transitionToState(data.initialState || 'welcome');

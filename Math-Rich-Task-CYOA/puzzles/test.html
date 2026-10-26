@@ -1,56 +1,183 @@
-<div class="test-puzzle-container" style="padding: 20px; font-family: monospace; color: #00ff66;">
+<div class="test-puzzle-container" style="padding: 20px; font-family: monospace; color: #00ff66; max-width: 800px; margin: 0 auto;">
   <h3 style="margin-top: 0; border-bottom: 1px solid #00ff66; padding-bottom: 5px;">
-    DIAGNOSTIC CALIBRATION :: METER SYNC
+    SOLAR ARRAY TELEMETRY :: PATTERN RECONSTRUCTION
   </h3>
 
-  <p>Adjust meter to target output value before submitting lock sequence.</p>
+  <p style="margin-bottom: 15px;">
+    [SYSTEM ALERT]: Telemetry records corrupted across 10-day buffer. Interpolate missing data points in each sequence to re-align relay bus.
+  </p>
 
-  <div style="margin: 20px 0; font-size: 1.2rem;">
-    <div>TARGET: <span id="target-val">5</span></div>
-    <div>CURRENT METER: [<span id="meter-val">0</span>]</div>
+  <style>
+    .puzzle-grid {
+      display: grid;
+      grid-template-columns: 200px repeat(10, 1fr);
+      gap: 4px;
+      margin-bottom: 20px;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .grid-header {
+      font-weight: bold;
+      color: #00ff66;
+      border-bottom: 1px solid #00ff66;
+      padding-bottom: 4px;
+      text-align: center;
+    }
+    .grid-label {
+      font-weight: bold;
+      color: #00ff66;
+      padding-right: 5px;
+    }
+    .grid-cell {
+      text-align: center;
+      padding: 4px 2px;
+      background: #001100;
+      border: 1px solid #004400;
+    }
+    .puzzle-input {
+      width: 100%;
+      background: #002200;
+      color: #00ff66;
+      border: 1px solid #00ff66;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 2px 0;
+      box-sizing: border-box;
+    }
+    .puzzle-input:focus {
+      outline: none;
+      background: #004400;
+      border-color: #ffffff;
+    }
+    .error-msg {
+      color: #ff3333;
+      margin-top: 10px;
+      font-weight: bold;
+      min-height: 1.2em;
+    }
+  </style>
+
+  <div class="puzzle-grid">
+    <div class="grid-header" style="text-align: left;">METRIC / DAY</div>
+    <div class="grid-header">D1</div>
+    <div class="grid-header">D2</div>
+    <div class="grid-header">D3</div>
+    <div class="grid-header">D4</div>
+    <div class="grid-header">D5</div>
+    <div class="grid-header">D6</div>
+    <div class="grid-header">D7</div>
+    <div class="grid-header">D8</div>
+    <div class="grid-header">D9</div>
+    <div class="grid-header">D10</div>
+
+    <!-- Row 1: Station Power Level -->
+    <div class="grid-label">STATION PWR (%)</div>
+    <div class="grid-cell">100</div>
+    <div class="grid-cell">97</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="94"></div>
+    <div class="grid-cell">91</div>
+    <div class="grid-cell">88</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="85"></div>
+    <div class="grid-cell">82</div>
+    <div class="grid-cell">79</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="76"></div>
+    <div class="grid-cell">73</div>
+
+    <!-- Row 2: Engines Power Draw -->
+    <div class="grid-label">ENGINE DRAW (kW)</div>
+    <div class="grid-cell">60</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="55"></div>
+    <div class="grid-cell">50</div>
+    <div class="grid-cell">45</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="40"></div>
+    <div class="grid-cell">35</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="30"></div>
+    <div class="grid-cell">25</div>
+    <div class="grid-cell">20</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="15"></div>
+
+    <!-- Row 3: Life Support Draw -->
+    <div class="grid-label">LIFE SUPP (kW)</div>
+    <div class="grid-cell">10</div>
+    <div class="grid-cell">14</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="18"></div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="22"></div>
+    <div class="grid-cell">26</div>
+    <div class="grid-cell">30</div>
+    <div class="grid-cell">34</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="38"></div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="42"></div>
+    <div class="grid-cell">46</div>
+
+    <!-- Row 4: Auxiliary Draw -->
+    <div class="grid-label">AUX DRAW (kW)</div>
+    <div class="grid-cell">30</div>
+    <div class="grid-cell">27</div>
+    <div class="grid-cell">24</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="21"></div>
+    <div class="grid-cell">18</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="15"></div>
+    <div class="grid-cell">12</div>
+    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="9"></div>
+    <div class="grid-cell">6</div>
+    <div class="grid-cell">3</div>
   </div>
 
-  <div style="margin-bottom: 20px;">
-    <button id="btn-increment" style="background: #002200; color: #00ff66; border: 1px solid #00ff66; padding: 8px 16px; font-family: monospace; cursor: pointer; margin-right: 10px;">
-      +1 INCREMENT
+  <div id="status-feedback" class="error-msg"></div>
+
+  <div style="margin-top: 15px;">
+    <button id="btn-submit-telemetry" style="background: #003311; color: #00ff66; border: 1px solid #00ff66; padding: 10px 24px; font-family: monospace; cursor: pointer; font-weight: bold; margin-right: 10px;">
+      SUBMIT CALIBRATION
     </button>
-    <button id="btn-reset" style="background: #220000; color: #ff3333; border: 1px solid #ff3333; padding: 8px 16px; font-family: monospace; cursor: pointer;">
-      RESET
+    <button id="btn-abort-telemetry" style="background: #220000; color: #ff3333; border: 1px solid #ff3333; padding: 10px 18px; font-family: monospace; cursor: pointer;">
+      ABORT
     </button>
   </div>
-
-  <button id="btn-submit" style="background: #003311; color: #00ff66; border: 1px solid #00ff66; padding: 10px 24px; font-family: monospace; cursor: pointer; font-weight: bold;">
-    SUBMIT DIAGNOSTIC
-  </button>
 </div>
 
 <script>
   (function() {
-    const target = 5;
-    let currentMeter = 0;
+    const submitBtn = document.getElementById('btn-submit-telemetry');
+    const abortBtn = document.getElementById('btn-abort-telemetry');
+    const feedback = document.getElementById('status-feedback');
+    const inputs = document.querySelectorAll('.puzzle-input');
 
-    const meterDisplay = document.getElementById('meter-val');
-    const btnIncrement = document.getElementById('btn-increment');
-    const btnReset = document.getElementById('btn-reset');
-    const btnSubmit = document.getElementById('btn-submit');
+    submitBtn.addEventListener('click', () => {
+      let allCorrect = true;
+      let emptyFound = false;
 
-    btnIncrement.addEventListener('click', () => {
-      currentMeter++;
-      meterDisplay.textContent = currentMeter;
-    });
+      inputs.forEach(input => {
+        const val = input.value.trim();
+        const expected = input.getAttribute('data-answer');
 
-    btnReset.addEventListener('click', () => {
-      currentMeter = 0;
-      meterDisplay.textContent = currentMeter;
-    });
+        if (val === '') {
+          emptyFound = true;
+          allCorrect = false;
+          input.style.borderColor = '#ff3333';
+        } else if (val !== expected) {
+          allCorrect = false;
+          input.style.borderColor = '#ff3333';
+        } else {
+          input.style.borderColor = '#00ff66';
+        }
+      });
 
-    btnSubmit.addEventListener('click', () => {
-      // Dynamic state resolution
-      if (currentMeter === target) {
-        window.completePuzzleModule('puzzle_success');
+      if (emptyFound) {
+        feedback.textContent = '[ERROR]: Incomplete telemetry data. Fill all missing entries.';
+      } else if (!allCorrect) {
+        feedback.textContent = '[ERROR]: Sequence mismatch detected. Check calculation patterns.';
       } else {
-        window.completePuzzleModule('puzzle_fail');
+        feedback.style.color = '#00ff66';
+        feedback.textContent = '[SUCCESS]: Pattern synchronized. Recalibrating relay...';
+        setTimeout(() => {
+          window.completePuzzleModule('solar_resolved');
+        }, 1200);
       }
+    });
+
+    abortBtn.addEventListener('click', () => {
+      window.completePuzzleModule('diagnostic');
     });
   })();
 </script>

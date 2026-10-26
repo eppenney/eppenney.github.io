@@ -1,113 +1,328 @@
 {
   "title": "Combined Facility Outer-11 System Diagnostic",
   "initialState": "welcome",
-  "defaultUnrecognized": "[UNRECOGNIZED DIRECTIVE]: Command not recognized by local sub-routine. Type 'help' for available overrides.",
+  "defaultUnrecognized": "[UNRECOGNIZED DIRECTIVE]: Directive '%INPUT%' not understood. Type 'help' to list valid terminal commands.",
   "states": {
     "welcome": {
       "type": "text",
       "content": [
         "====================================================================",
-        " ____ ____  _   _ _____ _____ _   _ _____ ____   ",
-        "/ ___/ ___|| | | |_   _| ____| \\ | | ____|  _ \\  ",
-        "| |  | |  _ | | | | | | |  _| |  \\| |  _| | | | | ",
-        "| |__| |_| || |_| | | | | |___| |\\  | |___| |_| | ",
-        " \\____\\____| \\___/  |_| |_____|_| \\_|_____|____/  ",
-        "                                                    ",
-        " COMBINED FACILITY OUTER-11 :: DIAGNOSTIC TERMINAL",
-        " SYSTEM VERSION 4.09.2a -- RESTRICTED ENTRY POINT",
+        " _  _  _ _____ _   _   ___  __  ___  _____ ",
+        " | || || | ____| | | |/ _ \\|  \\/  |/ _ \\ ",
+        " | || || |  _| | | | | | | | |\\/| |  __/ ",
+        " | || || | |___| |_| | |_| | |  | | |___ ",
+        "  \\_/\\_/|_____|\\___/ \\___/|_|  |_|\\____| ",
+        "                                         ",
+        "COMBINED FACILITY OUTER-11 DIAGNOSTIC TERMINAL",
+        "SYSTEM VERSION 43.08.2a",
+        "RESTRICTED ACCESS – CLEARANCE LEVEL 1",
         "====================================================================",
         "",
-        "[SYSTEM] Initializing telemetry links... OK",
-        "[SYSTEM] Primary power bus status: NOMINAL (UNSTABLE OFFSET DETECTED)",
-        "[SYSTEM] Authorization protocol engaged.",
-        "",
-        "Welcome, Engineer.",
-        "Authentication terminal online. Please log your command or credentials below.",
-        "Type 'help' to review basic operational parameters."
+        "[SYSTEM] Authentication verified.",
+        "Primary control menu loaded. Enter a [COMMAND] or option number below.",
+        "Type 'help' at any time to display available commands.",
+        "[1] RUN STATION [DIAGNOSTIC] ",
+        "[2] VIEW SECURITY [LOGS]",
+        "{INBOX_OPTION}",
+        "[4] VIEW [NOTES]",
+        "[5] ACCESS [EMERGENCY] RESPONSE TERMINAL"
+      ],
+      "dynamicLines": [
+        {
+          "token": "{INBOX_OPTION}",
+          "defaultText": "[3] VIEW [INBOX]",
+          "rules": [
+            {
+              "flags": ["new_message_1", "new_message_2", "new_message_3"],
+              "condition": "any",
+              "text": "[3] VIEW [INBOX] *"
+            }
+          ]
+        }
       ],
       "commands": [
         {
-          "input": ["help", "info", "?"],
+          "input": ["help", "info", "?", "options"],
           "type": "text",
           "response": [
-            "[SYSTEM LOG]: Terminal running restricted operational sub-routine.",
-            "Available commands:",
-            "  - 'status' : Check primary deck telemetry.",
-            "  - 'puzzles' : Open manual circuit diagnostic interface."
+            "--------------------------------------------------------------------",
+            "AVAILABLE TERMINAL COMMANDS:",
+            "  1. [DIAGNOSTIC]                    : Check station sub-systems.",
+            "  2. [LOGS]                          : Review security access logs.",
+            "  3. [INBOX]                         : View your messages.",
+            "  4. [NOTES]                         : Access personal engineer logbook.",
+            "  5. [EMERGENCY]                     : Emergency override console (LOCKED).",
+            "--------------------------------------------------------------------"
           ]
         },
         {
-          "input": ["status", "check status", "1"],
+          "input": ["1", "run diagnostic", "diagnostic", "station"],
           "type": "state",
-          "nextState": "deck_status"
+          "nextState": "diagnostic"
         },
         {
-          "input": ["puzzles", "override", "2"],
-          "type": "redirect",
-          "targetUrl": "puzzles/test.html",
-          "fallbackText": "[SYSTEM]: Rerouting command pipeline to sub-system diagnostic canvas..."
+          "input": ["2", "security logs", "security", "logs"],
+          "type": "text",
+          "response": "[ERROR]: SYSTEM NONFUNCTIONAL - Security log database offline."
+        },
+        {
+          "input": ["3", "inbox", "messages"],
+          "type": "state",
+          "nextState": "inbox"
+        },
+        {
+          "input": ["4", "notes", "logbook"],
+          "type": "text",
+          "response": "[ERROR]: SYSTEM NONFUNCTIONAL - Notes module unallocated."
+        },
+        {
+          "input": ["5", "emergency", "emergency response terminal", "emergency response"],
+          "type": "text",
+          "response": "[ERROR]: ACCESS DENIED - REQUIRES CLEARANCE LEVEL 3"
         }
       ]
     },
-    "deck_status": {
+    "inbox": {
       "type": "text",
       "content": [
         "--------------------------------------------------------------------",
-        "FACILITY TELEMETRY SUMMARY :: DECK 03",
+        "EMPLOYEE #03395P INBOX :: DECK 07 LOCAL TERMINAL",
         "--------------------------------------------------------------------",
-        "[ALERT] Sub-station 3 auxiliary power draw fluctuating.",
-        "Linear offset detected in pressure distribution relays.",
+        "Enter the option number in [] next to a message to read its contents.",
+        "Type 'home' or 'exit' to return to the primary control menu.",
         "",
-        "Type 'return' to go back to primary authentication screen, or 'override' to launch diagnostic module."
+        "--------------------------------------------------------------------",
+        "{MESSAGE_1}",
+        "--------------------------------------------------------------------"
+      ],
+      "dynamicLines": [
+        {
+          "token": "{MESSAGE_1}",
+          "defaultText": "[NO MESSAGES IN BUFFER]",
+          "rules": [
+            {
+              "flags": ["new_message_1"],
+              "condition": "any",
+              "text": "[1] Work Order - Power Fluctuations (NEW)"
+            },
+            {
+              "flags": ["message_1"],
+              "condition": "any",
+              "text": "[1] Work Order - Power Fluctuations (READ)"
+            }
+          ]
+        }
       ],
       "commands": [
         {
-          "input": ["return", "back"],
-          "type": "state",
-          "nextState": "welcome"
+          "input": ["help", "info", "?", "options"],
+          "type": "text",
+          "response": [
+            "--------------------------------------------------------------------",
+            "INBOX COMMANDS:",
+            "  Enter the number in [] to read a dispatch.",
+            "  - 'home' / 'exit' / 'return' : Return to main terminal screen.",
+            "--------------------------------------------------------------------"
+          ]
         },
         {
-          "input": ["override", "puzzles"],
+          "input": ["1", "work order", "power fluctuations"],
+          "type": "text",
+          "requiredFlagsAny": ["new_message_1", "message_1"],
+          "removeFlags": ["new_message_1"],
+          "setFlags": ["message_1"],
+          "response": [
+            "====================================================================",
+            "SUBJ: Work Order - Power Fluctuations",
+            "FROM: Chief Engineer Vance (Deck 01 Maintenance)",
+            "DATE: 2184.298 -- 08:42 SST",
+            "====================================================================",
+            "",
+            "\"Hey - someone flagged some oddities in the power consumption of the",
+            "life support system. Can you run a diagnostic and see what's up?\"",
+            "",
+            "===================================================================="
+          ]
+        },
+        {
+          "input": ["home", "exit", "return", "back", "main"],
+          "type": "state",
+          "nextState": "welcome"
+        }
+      ]
+    },
+    "diagnostic": {
+      "type": "text",
+      "content": [
+        "--------------------------------------------------------------------",
+        "STATION DIAGNOSTIC CONSOLE :: PRIMARY SYSTEMS MONITOR",
+        "--------------------------------------------------------------------",
+        "Type 'run' or 'scan' to execute a full station system diagnostic.",
+        "Type 'home' or 'exit' to return to the primary control menu.",
+        "--------------------------------------------------------------------",
+        "{ENGINE_STATUS}",
+        "{SOLAR_STATUS}",
+        "{LIFESUPPORT_STATUS}",
+        "{ESCAPE_STATUS}",
+        "{AIRLOCK_STATUS}",
+        "{DOCKING_STATUS}",
+        "--------------------------------------------------------------------"
+      ],
+      "dynamicLines": [
+        {
+          "token": "{ENGINE_STATUS}",
+          "defaultText": "[1] ENGINE: [STATUS UNKNOWN]",
+          "rules": [
+            {
+              "flags": ["diagnostic_1"],
+              "condition": "any",
+              "text": "[1] ENGINE: [NOMINAL]"
+            }
+          ]
+        },
+        {
+          "token": "{SOLAR_STATUS}",
+          "defaultText": "[2] SOLAR GENERATORS: [STATUS UNKNOWN]",
+          "rules": [
+            {
+              "flags": ["solar_recalibrated"],
+              "condition": "any",
+              "text": "[2] SOLAR GENERATORS: [RECALIBRATED - NOMINAL]"
+            },
+            {
+              "flags": ["diagnostic_1"],
+              "condition": "any",
+              "text": "[2] SOLAR GENERATORS: [WARNING]"
+            }
+          ]
+        },
+        {
+          "token": "{LIFESUPPORT_STATUS}",
+          "defaultText": "[3] LIFE SUPPORT: [STATUS UNKNOWN]",
+          "rules": [
+            {
+              "flags": ["diagnostic_1"],
+              "condition": "any",
+              "text": "[3] LIFE SUPPORT: [NOMINAL]"
+            }
+          ]
+        },
+        {
+          "token": "{ESCAPE_STATUS}",
+          "defaultText": "[4] ESCAPE PODS: [STATUS UNKNOWN]",
+          "rules": [
+            {
+              "flags": ["diagnostic_1"],
+              "condition": "any",
+              "text": "[4] ESCAPE PODS: [NOMINAL]"
+            }
+          ]
+        },
+        {
+          "token": "{AIRLOCK_STATUS}",
+          "defaultText": "[5] AIR LOCKS: [STATUS UNKNOWN]",
+          "rules": [
+            {
+              "flags": ["diagnostic_1"],
+              "condition": "any",
+              "text": "[5] AIR LOCKS: [NOMINAL]"
+            }
+          ]
+        },
+        {
+          "token": "{DOCKING_STATUS}",
+          "defaultText": "[6] DOCKING BAYS: [STATUS UNKNOWN]",
+          "rules": [
+            {
+              "flags": ["diagnostic_1"],
+              "condition": "any",
+              "text": "[6] DOCKING BAYS: [NOMINAL]"
+            }
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "input": ["help", "info", "?", "options"],
+          "type": "text",
+          "response": [
+            "--------------------------------------------------------------------",
+            "DIAGNOSTIC CONSOLE COMMANDS:",
+            "  - [1-6] / System Name : Query individual system telemetry.",
+            "  - 'run' / 'scan'      : Execute full station diagnostic scan.",
+            "  - 'home' / 'exit'     : Return to main menu.",
+            "--------------------------------------------------------------------"
+          ]
+        },
+        {
+          "input": ["run", "scan", "execute", "run diagnostic", "run station diagnostic"],
+          "type": "state",
+          "setFlags": ["diagnostic_1"],
+          "nextState": "diagnostic"
+        },
+        {
+          "input": ["1", "engine"],
+          "type": "text",
+          "response": "[ENGINE]: Status nominal."
+        },
+        {
+          "input": ["2", "solar", "solar generators"],
           "type": "redirect",
           "targetUrl": "puzzles/test.html",
-          "fallbackText": "[SYSTEM]: Transferring control to physical line diagnostic board..."
-        }
-      ]
-    },
-    "puzzle_success": {
-      "type": "text",
-      "content": [
-        "--------------------------------------------------------------------",
-        "[DIAGNOSTIC PASSED]: Meter baseline synchronized.",
-        "Sub-station auxiliary relay locked to nominal parameters.",
-        "--------------------------------------------------------------------",
-        "Type 'welcome' to return to main terminal interface."
-      ],
-      "commands": [
+          "nextState": "solar_resolved",
+          "fallbackText": "[SYSTEM]: Accessing Solar Generator calibration module..."
+        },
         {
-          "input": ["welcome", "return", "1"],
+          "input": ["3", "life support"],
+          "type": "text",
+          "response": "[LIFE SUPPORT]: Status nominal."
+        },
+        {
+          "input": ["4", "escape pods", "escape"],
+          "type": "text",
+          "response": "[ESCAPE PODS]: Status nominal."
+        },
+        {
+          "input": ["5", "air locks", "airlocks"],
+          "type": "text",
+          "response": "[AIR LOCKS]: Status nominal."
+        },
+        {
+          "input": ["6", "docking bays", "docking"],
+          "type": "text",
+          "response": "[DOCKING BAYS]: Status nominal."
+        },
+        {
+          "input": ["home", "exit", "return", "back", "main"],
           "type": "state",
           "nextState": "welcome"
         }
       ]
     },
-    "puzzle_fail": {
+    "solar_generator": {
+      "type": "redirect",
+      "targetUrl": "puzzles/test.html",
+      "nextState": "solar_resolved",
+      "fallbackText": "[SYSTEM]: Transferring interface to Solar Generator diagnostic module..."
+    },
+    "solar_resolved": {
       "type": "text",
+      "setFlags": ["solar_recalibrated"],
       "content": [
         "--------------------------------------------------------------------",
-        "[DIAGNOSTIC FAILED]: Imbalance detected in signal meter.",
-        "Overload threshold triggered. Calibration sequence aborted.",
+        "[CALIBRATION COMPLETE]: Solar generator array output re-aligned.",
+        "Primary power bus lock restored.",
         "--------------------------------------------------------------------",
-        "Type 'retry' to re-attempt calibration or 'welcome' to exit."
+        "Type 'diagnostic' to return to monitor screen or 'home' for main menu."
       ],
       "commands": [
         {
-          "input": ["retry", "1"],
-          "type": "redirect",
-          "targetUrl": "puzzles/test.html"
+          "input": ["diagnostic", "back", "1"],
+          "type": "state",
+          "nextState": "diagnostic"
         },
         {
-          "input": ["welcome", "return", "2"],
+          "input": ["home", "exit", "2"],
           "type": "state",
           "nextState": "welcome"
         }
