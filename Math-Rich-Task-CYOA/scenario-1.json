@@ -276,12 +276,25 @@
           "requiredFlagsAny": ["diagnostic_1"],
           "targetUrl": "puzzles/corrupted_power_logs.html",
           "nextState": "solar_resolved",
-          "response": "[SYSTEM]: Accessing Solar Generator calibration module...",
-          "fallbackText" : "[SYSTEM]: Solar systems nominal; no further action required."
+          "response": "[SYSTEM]: Accessing Solar Generator calibration module..."
+        },
+        {
+          "input": ["2", "solar", "solar generators"],
+          "type": "text",
+          "requiredFlagsAny": ["solar_recalibrated"],
+          "response": "[SYSTEM]: Solar Module status nominal. No further action required."
         },
         {
           "input": ["3", "life support"],
           "type": "text",
+          "requiredFlagsAny": ["solar_recalibrated"],
+          "targetUrl": "puzzles/life_support_diagnostic.html",
+          "nextState": "life_support_diagnostic",
+          "response": "[SYSTEM]: Accessing Life Support diagnostic module..."
+        },
+        {
+          "input": ["3", "life support"],
+          "type": "redirect",
           "response": "[LIFE SUPPORT]: Status nominal."
         },
         {

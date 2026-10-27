@@ -4,7 +4,7 @@
   </h3>
 
   <p style="margin-bottom: 15px;">
-    [SYSTEM ALERT]: Telemetry records corrupted across 10-day buffer. Interpolate missing data points in each sequence to re-align relay bus.
+    [SYSTEM ALERT]: Telemetry records corrupted across 10-day buffer. Interpolate missing data points in each sequence to complete data log. 
   </p>
 
   <style>
@@ -142,11 +142,13 @@
     const abortBtn = document.getElementById('btn-abort-telemetry');
     const feedback = document.getElementById('status-feedback');
     const inputs = document.querySelectorAll('.puzzle-input');
+    let attempts = 0;
 
     submitBtn.addEventListener('click', () => {
       let allCorrect = true;
       let emptyFound = false;
-
+      attempts++;
+      
       inputs.forEach(input => {
         const val = input.value.trim();
         const expected = input.getAttribute('data-answer');
@@ -164,9 +166,17 @@
       });
 
       if (emptyFound) {
-        feedback.textContent = '[ERROR]: Incomplete telemetry data. Fill all missing entries.';
+        if (attempts > 2) {
+          feedback.textContent = '[ERROR]: Incomplete telemetry data. Ensure you fill all of the missing entries to complete the data log. \n[SYSTEM]: Automated hint: System levels follow a linear pattern. Check the differences between consecutive days to identify the correct values.';
+        } else {
+          feedback.textContent = '[ERROR]: Incomplete telemetry data. Ensure you fill all of the missing entries to complete the data log.';
+        }
       } else if (!allCorrect) {
-        feedback.textContent = '[ERROR]: Sequence mismatch detected. Check calculation patterns.';
+        if (attempts > 2) {
+          feedback.textContent = '[ERROR]: Sequence mismatch detected. Entries in error have been highlighted. Check interpolated data against surrounding data points. \n[SYSTEM]: Automated hint: System levels follow a linear pattern. Check the differences between consecutive days to identify the correct values.';
+        } else {
+          feedback.textContent = '[ERROR]: Sequence mismatch detected. Entries in error have been highlighted. Check interpolated data against surrounding data points.';
+        }
       } else {
         feedback.style.color = '#00ff66';
         feedback.textContent = '[SUCCESS]: Pattern synchronized. Recalibrating relay...';
