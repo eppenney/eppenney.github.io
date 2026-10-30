@@ -72,8 +72,8 @@
         },
         {
           "input": ["4", "notes", "logbook"],
-          "type": "text",
-          "response": "[ERROR]: SYSTEM NONFUNCTIONAL - Notes module unallocated."
+          "type": "state",
+          "nextState": "notes"
         },
         {
           "input": ["5", "emergency", "emergency response terminal", "emergency response"],
@@ -187,12 +187,12 @@
             {
               "flags": ["solar_recalibrated"],
               "condition": "any",
-              "text": "[2] SOLAR GENERATORS: [RECALIBRATED - NOMINAL]"
+              "text": "[2] SOLAR GENERATORS: [NOMINAL]"
             },
             {
               "flags": ["diagnostic_1"],
               "condition": "any",
-              "text": "[2] SOLAR GENERATORS: [WARNING]"
+              "text": "[2] SOLAR GENERATORS: [UNKNOWN - INTERVENTION REQUIRED]"
             }
           ]
         },
@@ -200,6 +200,11 @@
           "token": "{LIFESUPPORT_STATUS}",
           "defaultText": "[3] LIFE SUPPORT: [STATUS UNKNOWN]",
           "rules": [
+            {
+              "flags": ["solar_recalibrated"],
+              "condition": "any",
+              "text": "[3] LIFE SUPPORT: [WARNING]"
+            },
             {
               "flags": ["diagnostic_1"],
               "condition": "any",
@@ -268,13 +273,28 @@
         {
           "input": ["2", "solar", "solar generators"],
           "type": "redirect",
-          "targetUrl": "puzzles/test.html",
+          "requiredFlagsAny": ["diagnostic_1"],
+          "targetUrl": "puzzles/corrupted_power_logs.html",
           "nextState": "solar_resolved",
-          "fallbackText": "[SYSTEM]: Accessing Solar Generator calibration module..."
+          "response": "[SYSTEM]: Accessing Solar Generator calibration module..."
+        },
+        {
+          "input": ["2", "solar", "solar generators"],
+          "type": "text",
+          "requiredFlagsAny": ["solar_recalibrated"],
+          "response": "[SYSTEM]: Solar Module status nominal. No further action required."
         },
         {
           "input": ["3", "life support"],
           "type": "text",
+          "requiredFlagsAny": ["solar_recalibrated"],
+          "targetUrl": "puzzles/life_support_diagnostic.html",
+          "nextState": "life_support_diagnostic",
+          "response": "[SYSTEM]: Accessing Life Support diagnostic module..."
+        },
+        {
+          "input": ["3", "life support"],
+          "type": "redirect",
           "response": "[LIFE SUPPORT]: Status nominal."
         },
         {
@@ -301,13 +321,12 @@
     },
     "solar_generator": {
       "type": "redirect",
-      "targetUrl": "puzzles/test.html",
+      "targetUrl": "puzzles/corrupted_power_logs.html",
       "nextState": "solar_resolved",
       "fallbackText": "[SYSTEM]: Transferring interface to Solar Generator diagnostic module..."
     },
     "solar_resolved": {
       "type": "text",
-      "setFlags": ["solar_recalibrated"],
       "content": [
         "--------------------------------------------------------------------",
         "[CALIBRATION COMPLETE]: Solar generator array output re-aligned.",
@@ -319,12 +338,55 @@
         {
           "input": ["diagnostic", "back", "1"],
           "type": "state",
+          "setFlags": ["solar_recalibrated"],
           "nextState": "diagnostic"
         },
         {
           "input": ["home", "exit", "2"],
           "type": "state",
+          "setFlags": ["solar_recalibrated"],
           "nextState": "welcome"
+        }
+      ]
+    },
+    "notes" : {
+      "type": "state",
+      "content" : [
+        "--------------------------------------------------------------------",
+        "PERSONAL ENGINEER LOGBOOK",
+        "--------------------------------------------------------------------",
+        "{SOLAR_STATUS_ENTRY}",
+        "-END OF LOG-"
+      ],
+      "dynamicLines": [
+        {
+          "token": "{SOLAR_STATUS_ENTRY}",
+          "defaultText": "[NO LOG ENTRIES]",
+          "rules": [
+            {
+              "flags": ["solar_recalibrated"],
+              "condition": "any",
+              "text": "[LOG ENTRY 001]: I was able to correct the corrupted power logs. It looks like the life support system is siphoning power from the other systems. I should check on the life support systems to see if there are any issues."
+            }
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "input": ["home", "exit", "return", "back", "main"],
+          "type": "state",
+          "nextState": "welcome"
+        }, 
+        
+        {
+          "input": ["help", "info", "?", "options"],
+          "type": "text",
+          "response": [
+            "--------------------------------------------------------------------",
+            "LOGBOOK COMMANDS:",
+            "  - 'home' / 'exit' / 'return' : Return to main terminal screen.",
+            "--------------------------------------------------------------------"
+          ]
         }
       ]
     }
