@@ -1,7 +1,7 @@
 {
   "title": "Combined Facility Outer-11 System Diagnostic",
   "initialState": "welcome",
-  "defaultUnrecognized": "[UNRECOGNIZED DIRECTIVE]: Directive '%INPUT%' not understood. Type 'help' to list valid terminal commands.",
+  "defaultUnrecognized": "UNRECOGNIZED DIRECTIVE: Directive '%INPUT%' not understood. Type 'help' to list valid terminal commands.",
   "states": {
     "welcome": {
       "type": "text",
@@ -18,7 +18,7 @@
         "RESTRICTED ACCESS – CLEARANCE LEVEL 1",
         "====================================================================",
         "",
-        "[SYSTEM] Authentication verified.",
+        "SYSTEM: Authentication verified.",
         "Primary control menu loaded. Enter a [COMMAND] or option number below.",
         "Type 'help' at any time to display available commands.",
         "[1] RUN STATION [DIAGNOSTIC] ",
@@ -63,7 +63,7 @@
         {
           "input": ["2", "security logs", "security", "logs"],
           "type": "text",
-          "response": "[ERROR]: SYSTEM NONFUNCTIONAL - Security log database offline."
+          "response": "ERROR: SYSTEM NONFUNCTIONAL - Security log database offline."
         },
         {
           "input": ["3", "inbox", "messages"],
@@ -78,7 +78,7 @@
         {
           "input": ["5", "emergency", "emergency response terminal", "emergency response"],
           "type": "text",
-          "response": "[ERROR]: ACCESS DENIED - REQUIRES CLEARANCE LEVEL 3"
+          "response": "ERROR: ACCESS DENIED - REQUIRES CLEARANCE LEVEL 3"
         }
       ]
     },
@@ -93,12 +93,15 @@
         "",
         "--------------------------------------------------------------------",
         "{MESSAGE_1}",
+        "{MESSAGE_2}",
+        "{MESSAGE_3}",
+        "- END OF INBOX -",
         "--------------------------------------------------------------------"
       ],
       "dynamicLines": [
         {
           "token": "{MESSAGE_1}",
-          "defaultText": "[NO MESSAGES IN BUFFER]",
+          "defaultText": "(NO MESSAGES IN BUFFER)",
           "rules": [
             {
               "flags": ["new_message_1"],
@@ -109,6 +112,38 @@
               "flags": ["message_1"],
               "condition": "any",
               "text": "[1] Work Order - Power Fluctuations (READ)"
+            }
+          ]
+        }, 
+        {
+          "token": "{MESSAGE_2}",
+          "defaultText": "",
+          "rules": [
+            {
+              "flags": ["new_message_2"],
+              "condition": "any",
+              "text": "[2] System Update - Solar Array Calibration (NEW)"
+            },
+            {
+              "flags": ["message_2"],
+              "condition": "any",
+              "text": "[2] System Update - Solar Array Calibration (READ)"
+            }
+          ]
+        },
+        {
+          "token": "{MESSAGE_3}",
+          "defaultText": "",
+          "rules": [
+            {
+              "flags": ["new_message_3"],
+              "condition": "any",
+              "text": "[3] Maintenance Alert - Airlock Systems (NEW)"
+            },
+            {
+              "flags": ["message_3"],
+              "condition": "any",
+              "text": "[3] Maintenance Alert - Airlock Systems (READ)"
             }
           ]
         }
@@ -141,8 +176,57 @@
             "\"Hey - someone flagged some oddities in the power consumption of the",
             "life support system. Can you run a diagnostic and see what's up?\"",
             "",
-            "===================================================================="
+            "====================================================================", 
+            "Type 'home' or 'exit' to return to the primary control menu.",
+            "Type 'inbox' to return to the inbox menu."
           ]
+        },
+        {
+          "input": ["2", "system update", "solar array calibration"],
+          "type": "text",
+          "requiredFlagsAny": ["new_message_2", "message_2"],
+          "removeFlags": ["new_message_2"],
+          "setFlags": ["message_2"],
+          "response": [
+            "====================================================================",
+            "SUBJ: System Update - Solar Array Calibration",
+            "FROM: Chief Engineer Vance (Deck 01 Maintenance)",
+            "DATE: 2184.298 -- 08:42 SST",
+            "====================================================================",
+            "",
+            "\"Hey - I was able to correct the corrupted power logs. It looks like the",
+            "life support system is siphoning power from the other systems. You should",
+            "check on the life support systems to see if there are any issues.\"",
+            "",
+            "====================================================================", 
+            "Type 'home' or 'exit' to return to the primary control menu.",
+            "Type 'inbox' to return to the inbox menu."
+          ]
+        },
+        {
+          "input": ["3", "maintenance alert", "airlock systems"],
+          "type": "text",
+          "requiredFlagsAny": ["new_message_3", "message_3"],
+          "removeFlags": ["new_message_3"],
+          "setFlags": ["message_3"],
+          "response": [
+            "====================================================================",
+            "SUBJ: Maintenance Alert - Airlock Systems",
+            "FROM: Chief Engineer Vance (Deck 01 Maintenance)",
+            "DATE: 2184.298 -- 08:42 SST",
+            "====================================================================",
+            "",
+            "\"Hey - I noticed some oddities in the airlock systems. Can you run a diagnostic and see what's up?\"",
+            "",
+            "====================================================================", 
+            "Type 'home' or 'exit' to return to the primary control menu.",
+            "Type 'inbox' to return to the inbox menu."
+          ]
+        },
+        {
+          "input": ["inbox", "return", "back"],
+          "type": "state",
+          "nextState": "inbox"
         },
         {
           "input": ["home", "exit", "return", "back", "main"],
@@ -157,7 +241,7 @@
         "--------------------------------------------------------------------",
         "STATION DIAGNOSTIC CONSOLE :: PRIMARY SYSTEMS MONITOR",
         "--------------------------------------------------------------------",
-        "Type 'run' or 'scan' to execute a full station system diagnostic.",
+        "{INSTRUCTIONS}",
         "Type 'home' or 'exit' to return to the primary control menu.",
         "--------------------------------------------------------------------",
         "{ENGINE_STATUS}",
@@ -171,77 +255,88 @@
       "dynamicLines": [
         {
           "token": "{ENGINE_STATUS}",
-          "defaultText": "[1] ENGINE: [STATUS UNKNOWN]",
+          "defaultText": "[1] ENGINE: (STATUS UNKNOWN)",
           "rules": [
             {
               "flags": ["diagnostic_1"],
               "condition": "any",
-              "text": "[1] ENGINE: [NOMINAL]"
+              "text": "[1] ENGINE: (NOMINAL)"
             }
           ]
         },
         {
           "token": "{SOLAR_STATUS}",
-          "defaultText": "[2] SOLAR GENERATORS: [STATUS UNKNOWN]",
+          "defaultText": "[2] SOLAR GENERATORS: (STATUS UNKNOWN)",
           "rules": [
             {
               "flags": ["solar_recalibrated"],
               "condition": "any",
-              "text": "[2] SOLAR GENERATORS: [NOMINAL]"
+              "text": "[2] SOLAR GENERATORS: (NOMINAL)"
             },
             {
               "flags": ["diagnostic_1"],
               "condition": "any",
-              "text": "[2] SOLAR GENERATORS: [UNKNOWN - INTERVENTION REQUIRED]"
+              "text": "[2] SOLAR GENERATORS: (UNKNOWN - INTERVENTION REQUIRED)"
             }
           ]
         },
         {
           "token": "{LIFESUPPORT_STATUS}",
-          "defaultText": "[3] LIFE SUPPORT: [STATUS UNKNOWN]",
+          "defaultText": "[3] LIFE SUPPORT: (STATUS UNKNOWN)",
           "rules": [
             {
               "flags": ["solar_recalibrated"],
               "condition": "any",
-              "text": "[3] LIFE SUPPORT: [WARNING]"
+              "text": "[3] LIFE SUPPORT: (WARNING)"
             },
             {
               "flags": ["diagnostic_1"],
               "condition": "any",
-              "text": "[3] LIFE SUPPORT: [NOMINAL]"
+              "text": "[3] LIFE SUPPORT: (NOMINAL)"
             }
           ]
         },
         {
           "token": "{ESCAPE_STATUS}",
-          "defaultText": "[4] ESCAPE PODS: [STATUS UNKNOWN]",
+          "defaultText": "[4] ESCAPE PODS: (STATUS UNKNOWN)",
           "rules": [
             {
               "flags": ["diagnostic_1"],
               "condition": "any",
-              "text": "[4] ESCAPE PODS: [NOMINAL]"
+              "text": "[4] ESCAPE PODS: (NOMINAL)"
             }
           ]
         },
         {
           "token": "{AIRLOCK_STATUS}",
-          "defaultText": "[5] AIR LOCKS: [STATUS UNKNOWN]",
+          "defaultText": "[5] AIR LOCKS: (STATUS UNKNOWN)",
           "rules": [
             {
               "flags": ["diagnostic_1"],
               "condition": "any",
-              "text": "[5] AIR LOCKS: [NOMINAL]"
+              "text": "[5] AIR LOCKS: (NOMINAL)"
             }
           ]
         },
         {
           "token": "{DOCKING_STATUS}",
-          "defaultText": "[6] DOCKING BAYS: [STATUS UNKNOWN]",
+          "defaultText": "[6] DOCKING BAYS: (STATUS UNKNOWN)",
           "rules": [
             {
               "flags": ["diagnostic_1"],
               "condition": "any",
-              "text": "[6] DOCKING BAYS: [NOMINAL]"
+              "text": "[6] DOCKING BAYS: (NOMINAL)"
+            }
+          ]
+        }, 
+        {
+          "token": "{INSTRUCTIONS}",
+          "defaultText": "Type 'run' or 'scan' to execute a full station diagnostic scan.",
+          "rules": [
+            {
+              "flags": ["diagnostic_1"],
+              "condition": "any",
+              "text": "Enter the option number in [] to view system."
             }
           ]
         }
@@ -253,7 +348,7 @@
           "response": [
             "--------------------------------------------------------------------",
             "DIAGNOSTIC CONSOLE COMMANDS:",
-            "  - [1-6] / System Name : Query individual system telemetry.",
+            "  - [1-6] / System Name : View specific system status.",
             "  - 'run' / 'scan'      : Execute full station diagnostic scan.",
             "  - 'home' / 'exit'     : Return to main menu.",
             "--------------------------------------------------------------------"
@@ -268,49 +363,57 @@
         {
           "input": ["1", "engine"],
           "type": "text",
-          "response": "[ENGINE]: Status nominal."
+          "response": "ENGINE: Status nominal."
+        },
+        {
+          "input": ["2", "solar", "solar generators"],
+          "type": "text",
+          "requiredFlagsAny": ["solar_recalibrated"],
+          "response": "SYSTEM: Solar Module status nominal. No further action required."
         },
         {
           "input": ["2", "solar", "solar generators"],
           "type": "redirect",
           "requiredFlagsAny": ["diagnostic_1"],
+          "forbiddenFlags": ["solar_recalibrated"],
           "targetUrl": "puzzles/corrupted_power_logs.html",
           "nextState": "solar_resolved",
-          "response": "[SYSTEM]: Accessing Solar Generator calibration module..."
-        },
-        {
-          "input": ["2", "solar", "solar generators"],
-          "type": "text",
-          "requiredFlagsAny": ["solar_recalibrated"],
-          "response": "[SYSTEM]: Solar Module status nominal. No further action required."
+          "fallbackText": "SYSTEM: Accessing Solar Generator power logs..."
         },
         {
           "input": ["3", "life support"],
           "type": "text",
-          "requiredFlagsAny": ["solar_recalibrated"],
-          "targetUrl": "puzzles/life_support_diagnostic.html",
-          "nextState": "life_support_diagnostic",
-          "response": "[SYSTEM]: Accessing Life Support diagnostic module..."
+          "requiredFlagsAny": ["life_support_diagnostic_complete"],
+          "response": "SYSTEM: Life support system status nominal. No further action required."
         },
         {
           "input": ["3", "life support"],
           "type": "redirect",
-          "response": "[LIFE SUPPORT]: Status nominal."
+          "requiredFlagsAny": ["solar_recalibrated"],
+          "targetUrl": "puzzles/data_extrapolation.html",
+          "nextState": "life_support_diagnostic",
+          "fallbackText": "SYSTEM: Accessing Life Support diagnostic module..."
+        },
+        {
+          "input": ["3", "life support"],
+          "type": "text",
+          "forbiddenFlags": ["solar_recalibrated"],
+          "response": "LIFE SUPPORT: Status nominal."
         },
         {
           "input": ["4", "escape pods", "escape"],
           "type": "text",
-          "response": "[ESCAPE PODS]: Status nominal."
+          "response": "ESCAPE PODS: Status nominal."
         },
         {
           "input": ["5", "air locks", "airlocks"],
           "type": "text",
-          "response": "[AIR LOCKS]: Status nominal."
+          "response": "AIR LOCKS: Status nominal."
         },
         {
           "input": ["6", "docking bays", "docking"],
           "type": "text",
-          "response": "[DOCKING BAYS]: Status nominal."
+          "response": "DOCKING BAYS: Status nominal."
         },
         {
           "input": ["home", "exit", "return", "back", "main"],
@@ -323,14 +426,13 @@
       "type": "redirect",
       "targetUrl": "puzzles/corrupted_power_logs.html",
       "nextState": "solar_resolved",
-      "fallbackText": "[SYSTEM]: Transferring interface to Solar Generator diagnostic module..."
+      "fallbackText": "SYSTEM: Transferring interface to Solar Generator diagnostic module..."
     },
     "solar_resolved": {
       "type": "text",
       "content": [
         "--------------------------------------------------------------------",
-        "[CALIBRATION COMPLETE]: Solar generator array output re-aligned.",
-        "Primary power bus lock restored.",
+        "LOGS COMPLETE: Corrupted data has been restored.",
         "--------------------------------------------------------------------",
         "Type 'diagnostic' to return to monitor screen or 'home' for main menu."
       ],
@@ -338,20 +440,49 @@
         {
           "input": ["diagnostic", "back", "1"],
           "type": "state",
-          "setFlags": ["solar_recalibrated"],
+          "setFlags": ["solar_recalibrated", "new_message_2"],
           "nextState": "diagnostic"
         },
         {
           "input": ["home", "exit", "2"],
           "type": "state",
-          "setFlags": ["solar_recalibrated"],
+          "setFlags": ["solar_recalibrated", "new_message_2"],
           "nextState": "welcome"
         }
       ]
     },
-    "notes" : {
+    "life_support_diagnostic": {
+      "type": "redirect",
+      "targetUrl": "puzzles/data_extrapolation.html",
+      "nextState": "life_support_resolved",
+      "fallbackText": "SYSTEM: Transferring interface to Life Support diagnostic module..."
+    },
+    "life_support_resolved": {
+      "type": "text",
+      "content": [
+        "--------------------------------------------------------------------",
+        "DIAGNOSTIC COMPLETE: X days of power remaining before life support systems fail.",
+        "--------------------------------------------------------------------",
+        "Type 'diagnostic' to return to monitor screen or 'home' for main menu."
+      ],
+      "commands": [
+        {
+          "input": ["diagnostic", "back", "1"],
+          "type": "state",
+          "setFlags": ["life_support_diagnostic_complete", "new_message_3"],
+          "nextState": "diagnostic"
+        },
+        {
+          "input": ["home", "exit", "2"],
+          "type": "state",
+          "setFlags": ["life_support_diagnostic_complete", "new_message_3"],
+          "nextState": "welcome"
+        }
+      ]
+    },
+    "notes": {
       "type": "state",
-      "content" : [
+      "content": [
         "--------------------------------------------------------------------",
         "PERSONAL ENGINEER LOGBOOK",
         "--------------------------------------------------------------------",
@@ -361,12 +492,12 @@
       "dynamicLines": [
         {
           "token": "{SOLAR_STATUS_ENTRY}",
-          "defaultText": "[NO LOG ENTRIES]",
+          "defaultText": "(NO LOG ENTRIES)",
           "rules": [
             {
               "flags": ["solar_recalibrated"],
               "condition": "any",
-              "text": "[LOG ENTRY 001]: I was able to correct the corrupted power logs. It looks like the life support system is siphoning power from the other systems. I should check on the life support systems to see if there are any issues."
+              "text": "LOG ENTRY 001: I was able to correct the corrupted power logs. It looks like the life support system is siphoning power from the other systems. I should check on the life support systems to see if there are any issues."
             }
           ]
         }
@@ -376,8 +507,7 @@
           "input": ["home", "exit", "return", "back", "main"],
           "type": "state",
           "nextState": "welcome"
-        }, 
-        
+        },
         {
           "input": ["help", "info", "?", "options"],
           "type": "text",

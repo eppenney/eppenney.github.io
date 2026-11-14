@@ -1,0 +1,393 @@
+<div class="linear-puzzle-container" style="padding: 20px; font-family: monospace; color: #00ff66; max-width: 850px; margin: 0 auto;">
+  <h3 style="margin-top: 0; border-bottom: 1px solid #00ff66; padding-bottom: 5px; display: flex; justify-content: space-between;">
+    <span>POWER BUS MODELING :: LINEAR REGRESSION</span>
+    <span id="stage-indicator">SYSTEM 1 / 4</span>
+  </h3>
+
+  <p id="system-brief" style="margin-bottom: 15px;">
+    Derive the linear equation <strong>y = mx + b</strong> for the active system, where <strong>x</strong> is days elapsed (D1 = 0) and <strong>y</strong> is power output/draw.
+  </p>
+
+  <style>
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: 140px repeat(10, 1fr);
+      gap: 4px;
+      margin-bottom: 15px;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .strip-header {
+      font-weight: bold;
+      border-bottom: 1px solid #00ff66;
+      padding-bottom: 3px;
+    }
+    .strip-cell {
+      background: #001100;
+      border: 1px solid #004400;
+      padding: 5px 2px;
+      transition: all 0.15s ease;
+    }
+    .cell-match {
+      background: #003311;
+      border-color: #00ff66;
+      color: #ffffff;
+      font-weight: bold;
+      box-shadow: 0 0 6px #00ff66;
+    }
+    .cell-miss {
+      background: #330000;
+      border-color: #ff3333;
+      color: #ff3333;
+      font-weight: bold;
+    }
+    .equation-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #001500;
+      border: 1px solid #004400;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      flex-wrap: wrap;
+    }
+    .eq-input {
+      width: 75px;
+      background: #002200;
+      color: #00ff66;
+      border: 1px solid #00ff66;
+      font-family: monospace;
+      font-size: 1.1rem;
+      text-align: center;
+      padding: 4px;
+    }
+    .eq-input:focus {
+      outline: none;
+      background: #003300;
+      border-color: #ffffff;
+    }
+    .chart-wrapper {
+      position: relative;
+      height: 260px;
+      width: 100%;
+      background: #000a00;
+      border: 1px solid #004400;
+      padding: 10px;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+    .feedback-box {
+      min-height: 2.4em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      white-space: pre-line;
+    }
+    .crt-btn {
+      background: #003311;
+      color: #00ff66;
+      border: 1px solid #00ff66;
+      padding: 10px 20px;
+      font-family: monospace;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .crt-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .crt-btn-danger {
+      background: #220000;
+      color: #ff3333;
+      border: 1px solid #ff3333;
+    }
+  </style>
+
+  <!-- Target Telemetry Data Strip -->
+  <div class="telemetry-strip" id="telemetry-strip"></div>
+
+  <!-- Equation Input Controls -->
+  <div class="equation-bar">
+    <span id="system-name-label" style="font-weight: bold; min-width: 160px;">STATION PWR (%):</span>
+    <span>y =</span>
+    <input type="number" step="any" id="input-m" class="eq-input" placeholder="m">
+    <span>x +</span>
+    <input type="number" step="any" id="input-b" class="eq-input" placeholder="b">
+    <button id="btn-verify" class="crt-btn" style="margin-left: auto; margin-right: 0;">PLOT &amp; VERIFY</button>
+  </div>
+
+  <!-- Chart.js Canvas -->
+  <div class="chart-wrapper">
+    <canvas id="telemetry-chart"></canvas>
+  </div>
+
+  <div id="model-feedback" class="feedback-box"></div>
+
+  <div>
+    <button id="btn-next-system" class="crt-btn" style="display: none;">NEXT SYSTEM &gt;&gt;</button>
+    <button id="btn-abort-model" class="crt-btn crt-btn-danger">ABORT</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const systems = [
+      {
+        name: "ENGINE DRAW (kW)",
+        unit: "kW",
+        m: -5,
+        b: 60,
+        data: [60, 55, 50, 45, 40, 35, 30, 25, 20, 15],
+        yMax: 70
+      },
+      {
+        name: "LIFE SUPP (kW)",
+        unit: "kW",
+        m: 8,
+        b: 10,
+        data: [10, 18, 26, 34, 42, 50, 58, 66, 74, 82],
+        yMax: 90
+      },
+      {
+        name: "AUX DRAW (kW)",
+        unit: "kW",
+        m: -3,
+        b: 30,
+        data: [30, 27, 24, 21, 18, 15, 12, 9, 6, 3],
+        yMax: 40
+      },
+      {
+        name: "STATION PWR (%)",
+        unit: "%",
+        m: -3,
+        b: 100,
+        data: [100, 97, 94, 91, 88, 85, 82, 79, 76, 73],
+        yMax: 110
+      }
+    ];
+
+    let currentIndex = 0;
+    let attempts = 0;
+    let isAnimating = false;
+    let chartInstance = null;
+
+    const stageIndicator = document.getElementById('stage-indicator');
+    const stripContainer = document.getElementById('telemetry-strip');
+    const systemNameLabel = document.getElementById('system-name-label');
+    const inputM = document.getElementById('input-m');
+    const inputB = document.getElementById('input-b');
+    const btnVerify = document.getElementById('btn-verify');
+    const btnNext = document.getElementById('btn-next-system');
+    const btnAbort = document.getElementById('btn-abort-model');
+    const feedback = document.getElementById('model-feedback');
+    const canvas = document.getElementById('telemetry-chart');
+
+    // Dynamically load Chart.js if not already present in the SPA shell
+    function ensureChartJs(callback) {
+      if (window.Chart) {
+        callback();
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+      script.onload = callback;
+      script.onerror = () => {
+        feedback.style.color = '#ff3333';
+        feedback.textContent = '[SYSTEM ERROR]: Failed to load graphing subsystem from CDN.';
+      };
+      document.head.appendChild(script);
+    }
+
+    function renderSystemUI() {
+      const sys = systems[currentIndex];
+      attempts = 0;
+      stageIndicator.textContent = `SYSTEM ${currentIndex + 1} / ${systems.length}`;
+      systemNameLabel.textContent = `${sys.name}:`;
+      inputM.value = '';
+      inputB.value = '';
+      inputM.disabled = false;
+      inputB.disabled = false;
+      btnVerify.disabled = false;
+      btnNext.style.display = 'none';
+      feedback.textContent = '';
+      feedback.style.color = '#00ff66';
+
+      // Build telemetry row
+      let html = `<div class="strip-header" style="text-align: left;">DAY (x)</div>`;
+      for (let x = 0; x < 10; x++) {
+        html += `<div class="strip-header">D${x + 1} (${x})</div>`;
+      }
+      html += `<div class="strip-cell" style="text-align: left; font-weight: bold;">TARGET (y)</div>`;
+      sys.data.forEach((val, idx) => {
+        html += `<div class="strip-cell" id="target-cell-${idx}">${val}</div>`;
+      });
+      stripContainer.innerHTML = html;
+
+      initChart(sys);
+    }
+
+    function initChart(sys) {
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      const labels = ['x=0 (D1)', 'x=1 (D2)', 'x=2 (D3)', 'x=3 (D4)', 'x=4 (D5)', 'x=5 (D6)', 'x=6 (D7)', 'x=7 (D8)', 'x=8 (D9)', 'x=9 (D10)'];
+
+      chartInstance = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Recorded Telemetry',
+              data: sys.data,
+              borderColor: 'rgba(0, 255, 102, 0.35)',
+              backgroundColor: 'rgba(0, 255, 102, 0.1)',
+              borderDash: [5, 5],
+              pointRadius: 5,
+              pointBackgroundColor: '#001100',
+              pointBorderColor: '#00ff66',
+              tension: 0
+            },
+            {
+              label: 'Proposed Model (y = mx + b)',
+              data: [],
+              borderColor: '#ffffff',
+              backgroundColor: '#ffffff',
+              pointRadius: 5,
+              pointBackgroundColor: [],
+              pointBorderColor: [],
+              tension: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false, // Controlled manually step-by-step
+          scales: {
+            x: {
+              ticks: { color: '#00ff66', font: { family: 'monospace' } },
+              grid: { color: '#002200' }
+            },
+            y: {
+              min: 0,
+              max: sys.yMax,
+              ticks: { color: '#00ff66', font: { family: 'monospace' } },
+              grid: { color: '#002200' }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { color: '#00ff66', font: { family: 'monospace' } }
+            }
+          }
+        }
+      });
+    }
+
+    function runVerificationAnimation(userM, userB) {
+      isAnimating = true;
+      btnVerify.disabled = true;
+      inputM.disabled = true;
+      inputB.disabled = true;
+      attempts++;
+
+      const sys = systems[currentIndex];
+      feedback.style.color = '#00ff66';
+      feedback.textContent = '[SYSTEM]: Plotting model and checking telemetry alignment...';
+
+      // Clear previous highlights & reset user dataset
+      for (let i = 0; i < 10; i++) {
+        const cell = document.getElementById(`target-cell-${i}`);
+        cell.className = 'strip-cell';
+      }
+      chartInstance.data.datasets[1].data = [];
+      chartInstance.data.datasets[1].pointBackgroundColor = [];
+      chartInstance.data.datasets[1].pointBorderColor = [];
+      chartInstance.update();
+
+      let step = 0;
+      let allMatched = true;
+
+      const interval = setInterval(() => {
+        if (step < 10) {
+          const predictedY = userM * step + userB;
+          const actualY = sys.data[step];
+          const isMatch = Math.abs(predictedY - actualY) < 0.001;
+
+          if (!isMatch) allMatched = false;
+
+          // Update Chart point
+          chartInstance.data.datasets[1].data.push(predictedY);
+          const pointColor = isMatch ? '#00ff66' : '#ff3333';
+          chartInstance.data.datasets[1].pointBackgroundColor.push(pointColor);
+          chartInstance.data.datasets[1].pointBorderColor.push(pointColor);
+          chartInstance.update();
+
+          // Highlight corresponding cell in telemetry strip
+          const cell = document.getElementById(`target-cell-${step}`);
+          cell.classList.add(isMatch ? 'cell-match' : 'cell-miss');
+
+          step++;
+        } else {
+          clearInterval(interval);
+          isAnimating = false;
+
+          if (allMatched) {
+            feedback.style.color = '#00ff66';
+            if (currentIndex < systems.length - 1) {
+              feedback.textContent = `[VERIFIED]: ${sys.name} linear model synchronized.`;
+              btnNext.style.display = 'inline-block';
+            } else {
+              feedback.textContent = '[ALL SYSTEMS VERIFIED]: Power bus equations locked. Returning to terminal...';
+              setTimeout(() => {
+                window.completePuzzleModule('solar_resolved');
+              }, 1500);
+            }
+          } else {
+            feedback.style.color = '#ff3333';
+            let msg = '[MISMATCH]: Model diverges from recorded telemetry. Adjust m (slope) or b (starting value at x=0) and retry.';
+            if (attempts > 2) {
+              msg += '\n[HINT]: b is the value at x=0 (D1). m is how much y changes each day.';
+            }
+            feedback.textContent = msg;
+            btnVerify.disabled = false;
+            inputM.disabled = false;
+            inputB.disabled = false;
+          }
+        }
+      }, 220); // 220ms per x-step for smooth left-to-right drawing
+    }
+
+    btnVerify.addEventListener('click', () => {
+      if (isAnimating) return;
+      const mVal = parseFloat(inputM.value);
+      const bVal = parseFloat(inputB.value);
+
+      if (isNaN(mVal) || isNaN(bVal)) {
+        feedback.style.color = '#ff3333';
+        feedback.textContent = '[ERROR]: Enter valid numeric values for both slope (m) and intercept (b).';
+        return;
+      }
+
+      runVerificationAnimation(mVal, bVal);
+    });
+
+    btnNext.addEventListener('click', () => {
+      if (currentIndex < systems.length - 1) {
+        currentIndex++;
+        renderSystemUI();
+      }
+    });
+
+    btnAbort.addEventListener('click', () => {
+      window.completePuzzleModule('diagnostic');
+    });
+
+    ensureChartJs(() => {
+      renderSystemUI();
+    });
+  })();
+</script>

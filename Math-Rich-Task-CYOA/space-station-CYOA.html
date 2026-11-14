@@ -320,9 +320,23 @@
         return;
       }
 
-      const matchedCommand = currentState.commands.find(cmd => 
-        cmd.input && cmd.input.some(alias => normalizeCommand(alias) === normalizedInput)
-      );
+      const matchedCommand = currentState.commands.find(cmd => {
+        const inputMatches = cmd.input && cmd.input.some(alias => normalizeCommand(alias) === normalizedInput);
+        if (!inputMatches) return false;
+
+        // If the command has flag gates, only match it if those gates pass (or if it's the only command with that input)
+        const hasMultipleWithSameInput = currentState.commands.filter(c => 
+          c.input && c.input.some(a => normalizeCommand(a) === normalizedInput)
+        ).length > 1;
+
+        if (hasMultipleWithSameInput) {
+          if (cmd.requiredFlags && !cmd.requiredFlags.every(hasFlag)) return false;
+          if (cmd.requiredFlagsAny && !cmd.requiredFlagsAny.some(hasFlag)) return false;
+          if (cmd.forbiddenFlags && cmd.forbiddenFlags.some(hasFlag)) return false;
+        }
+
+        return true;
+      });
 
       if (!matchedCommand) {
         const fallbackMsg = scenarioData.defaultUnrecognized 
