@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>COMBINED FACILITY OUTER-11 | TERMINAL ACCESS</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-retro-futurism.css">
   <style>
     #terminal-body {
       scroll-behavior: smooth;
@@ -415,7 +415,7 @@
     });
 
     window.addEventListener('DOMContentLoaded', () => {
-      fetch('scenario-1.json')
+      fetch('scenario-1-space-station.json')
         .then(response => {
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           return response.json();
@@ -441,7 +441,7 @@
           console.error('Failed to load scenario data:', err);
           appendSystemResponse([
             '[SYSTEM ERROR]: Unable to establish connection to scenario data pipeline.',
-            'Ensure scenario-1.json exists in working directory and server is active.'
+            'Ensure your scenario file exists in working directory and server is active.'
           ]);
         });
     });
