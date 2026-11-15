@@ -1,7 +1,8 @@
 {
   "title": "Combined Facility Outer-11 System Diagnostic",
   "initialState": "welcome",
-  "defaultUnrecognized": "UNRECOGNIZED DIRECTIVE: Directive '%INPUT%' not understood. Type 'help' to list valid terminal commands.",
+  "initialFlags": ["new_message_1"],
+  "defaultUnrecognized": "UNRECOGNIZED COMMAND: Command '%INPUT%' not understood. Type 'help' to list valid actions.",
   "states": {
     "welcome": {
       "type": "text",

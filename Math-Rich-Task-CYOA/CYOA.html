@@ -42,8 +42,8 @@
     let currentStateId = null;
     let isTyping = false;
 
-    // Global Flag System (Default includes new_message_1)
-    let gameFlags = ["new_message_1"];
+    // Global Flag System
+    let gameFlags = [];
 
     // Reset Confirmation State
     let pendingReset = false;
@@ -78,6 +78,10 @@
     function applyFlagChanges(setFlags = [], removeFlags = []) {
       if (Array.isArray(setFlags)) setFlags.forEach(addFlag);
       if (Array.isArray(removeFlags)) removeFlags.forEach(removeFlag);
+    }
+
+    function getInitialGameFlags() {
+      return Array.isArray(scenarioData.initialFlags) ? [...scenarioData.initialFlags] : [];
     }
 
     function scrollToTextBottom() {
@@ -286,7 +290,7 @@
         pendingReset = false;
         if (['y', 'yes', 'confirm'].includes(normalizedInput)) {
           localStorage.removeItem(SAVE_KEY);
-          gameFlags = ["new_message_1"];
+          gameFlags = getInitialGameFlags();
           terminalContent.innerHTML = '';
           appendSystemResponse([
             "[SYSTEM]: Memory buffer cleared.",
@@ -419,6 +423,7 @@
         .then(data => {
           scenarioData = data;
           if (data.title) document.title = data.title;
+          gameFlags = getInitialGameFlags();
 
           const saved = loadGameState();
           if (saved && saved.currentStateId && scenarioData.states[saved.currentStateId]) {
