@@ -364,7 +364,7 @@
     function handleAbort() {
       if (timerInterval) clearInterval(timerInterval);
       if (typeof window.completePuzzleModule === 'function') {
-        window.completePuzzleModule('supply_sheet_failed');
+        window.completePuzzleModule('supply_sheets_failure');
       }
     }
 
@@ -396,7 +396,7 @@
 
         setTimeout(() => {
           if (typeof window.completePuzzleModule === 'function') {
-            window.completePuzzleModule('supply_sheet_success');
+            window.completePuzzleModule('supply_sheets_success');
           }
         }, 1500);
       } else {

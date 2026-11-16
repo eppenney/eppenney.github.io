@@ -1619,13 +1619,36 @@
                     "input": ["help", "info", "?", "options"],
                     "type": "text",
                     "response": [
-                        "--------------------------------------------------------------------",
-                        "Available commands:",
-                        "- []        :",
-                        "- []          :",
-                        "- [HELP]          :Show this help message.",
-                        "--------------------------------------------------------------------"
-                    ]
+                       "--------------------------------------------------------------------",
+                       "Available commands:",
+                       "- [CONTINUE]      : Proceed to the next realization.",
+                       "- [HELP]          : Show this help message.",
+                       "--------------------------------------------------------------------"
+                   ]
+                }
+            ]
+        }, 
+        "supply_sheets_failure": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "With no more leads, you're unsure what to do.",
+                "As you sit in the docks, contemplating, a hoard of mechanics with welding masks run up to you.",
+                "Wait - those aren't welding masks! Those are computers!",
+                "--------------------------------------------------------------------",
+                "You are devoured by cyber-zombies. Type [retry] to try again!"
+            ],
+            "commands": [
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                       "--------------------------------------------------------------------",
+                       "Available commands:",
+                       "- [RETRY]         : Return to the start to try again.",
+                       "- [HELP]          : Show this help message.",
+                       "--------------------------------------------------------------------"
+                   ]
                 }
             ]
         }, 
