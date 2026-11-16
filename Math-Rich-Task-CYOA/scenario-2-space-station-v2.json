@@ -1093,18 +1093,30 @@
                 "--------------------------------------------------------------------",
                 "That can't be good...",
                 "You turn off the monitor just before the airlock violently decompresses with the scientist inside.",
+                "{TOKEN}",
                 "--------------------------------------------------------------------",
-                "{TOKEN}"
+                "{TOKEN_1}"
             ],
             "dynamicLines": [
                 {
                     "token": "{TOKEN}",
-                    "defaultText": "Shortly thereafter, several guards knock on your door - you were the last to access the manual override before a scientist was killed due to decompression. You are arrested, and watch the station be overtaken with cyber-zombies from behind bars. Type [RESET] to try again for a better ending!",
+                    "defaultText": "Shortly thereafter, several guards knock on your door - you were the last to access the manual override before a scientist was killed due to decompression. You are arrested, and watch the station be overtaken with cyber-zombies from behind bars. ",
                     "rules": [
                         {
                             "flags": ["data_restored"],
                             "condition": "any",
-                            "text": "You take a moment to collect yourself, before turning to your own task. Regardless of whatever that was, you must [calculate] how many days the ship has before total power failure."
+                            "text": "You take a moment to collect yourself, before turning to your own task. "
+                        }
+                    ]
+                },
+                {
+                    "token": "{TOKEN_1}",
+                    "defaultText": "Type [RESET] to try again for a better ending!",
+                    "rules": [
+                        {
+                            "flags": ["data_restored"],
+                            "condition": "any",
+                            "text": "Regardless of whatever that was, you must [calculate] how many days the ship has before total power failure."
                         }
                     ]
                 }
