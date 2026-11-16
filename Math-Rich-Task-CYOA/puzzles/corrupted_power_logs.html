@@ -4,17 +4,24 @@
   </h3>
 
   <p style="margin-bottom: 15px;">
-    [SYSTEM ALERT]: Telemetry records corrupted across 10-day buffer. Interpolate missing data points in each sequence to complete data log. 
+    [SYSTEM ALERT]: Power records corrupted across 10-day buffer. Interpolate missing data points in each sequence to complete data log. 
   </p>
 
   <style>
+    .puzzle-grid-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 20px;
+      border-right: 1px solid #004400;
+    }
     .puzzle-grid {
       display: grid;
-      grid-template-columns: 200px repeat(10, 1fr);
+      grid-template-columns: 150px repeat(10, minmax(46px, 1fr));
       gap: 4px;
-      margin-bottom: 20px;
       align-items: center;
       font-size: 0.85rem;
+      min-width: 650px;
     }
     .grid-header {
       font-weight: bold;
@@ -26,7 +33,21 @@
     .grid-label {
       font-weight: bold;
       color: #00ff66;
-      padding-right: 5px;
+      padding: 4px 6px 4px 2px;
+      position: sticky;
+      left: 0;
+      background: #030a05;
+      z-index: 2;
+      border-right: 1px solid #004400;
+    }
+    .grid-header.sticky-col {
+      position: sticky;
+      left: 0;
+      background: #030a05;
+      z-index: 3;
+      text-align: left;
+      padding-left: 2px;
+      border-right: 1px solid #004400;
     }
     .grid-cell {
       text-align: center;
@@ -55,82 +76,103 @@
       margin-top: 10px;
       font-weight: bold;
       min-height: 1.2em;
+      white-space: pre-line;
+    }
+    .telemetry-actions {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      .test-puzzle-container {
+        padding: 12px !important;
+      }
+      .puzzle-input {
+        font-size: 16px; /* Prevents iOS Safari auto-zoom on focus */
+        padding: 4px 0;
+      }
+      .grid-cell {
+        padding: 6px 2px;
+      }
     }
   </style>
 
-  <div class="puzzle-grid">
-    <div class="grid-header" style="text-align: left;">METRIC / DAY</div>
-    <div class="grid-header">D1</div>
-    <div class="grid-header">D2</div>
-    <div class="grid-header">D3</div>
-    <div class="grid-header">D4</div>
-    <div class="grid-header">D5</div>
-    <div class="grid-header">D6</div>
-    <div class="grid-header">D7</div>
-    <div class="grid-header">D8</div>
-    <div class="grid-header">D9</div>
-    <div class="grid-header">D10</div>
+  <div class="puzzle-grid-wrapper">
+    <div class="puzzle-grid">
+      <div class="grid-header sticky-col">METRIC / DAY</div>
+      <div class="grid-header">D1</div>
+      <div class="grid-header">D2</div>
+      <div class="grid-header">D3</div>
+      <div class="grid-header">D4</div>
+      <div class="grid-header">D5</div>
+      <div class="grid-header">D6</div>
+      <div class="grid-header">D7</div>
+      <div class="grid-header">D8</div>
+      <div class="grid-header">D9</div>
+      <div class="grid-header">D10</div>
 
-    <!-- Row 1: Station Power Level -->
-    <div class="grid-label">STATION PWR (%)</div>
-    <div class="grid-cell">100</div>
-    <div class="grid-cell">97</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="94"></div>
-    <div class="grid-cell">91</div>
-    <div class="grid-cell">88</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="85"></div>
-    <div class="grid-cell">82</div>
-    <div class="grid-cell">79</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="76"></div>
-    <div class="grid-cell">73</div>
+      <!-- Row 1: Station Power Level -->
+      <div class="grid-label">STATION PWR (%)</div>
+      <div class="grid-cell">100</div>
+      <div class="grid-cell">97</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="94"></div>
+      <div class="grid-cell">91</div>
+      <div class="grid-cell">88</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="85"></div>
+      <div class="grid-cell">82</div>
+      <div class="grid-cell">79</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="76"></div>
+      <div class="grid-cell">73</div>
 
-    <!-- Row 2: Engines Power Draw -->
-    <div class="grid-label">ENGINE DRAW (kW)</div>
-    <div class="grid-cell">60</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="55"></div>
-    <div class="grid-cell">50</div>
-    <div class="grid-cell">45</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="40"></div>
-    <div class="grid-cell">35</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="30"></div>
-    <div class="grid-cell">25</div>
-    <div class="grid-cell">20</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="15"></div>
+      <!-- Row 2: Engines Power Draw -->
+      <div class="grid-label">ENGINE DRAW (kW)</div>
+      <div class="grid-cell">60</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="55"></div>
+      <div class="grid-cell">50</div>
+      <div class="grid-cell">45</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="40"></div>
+      <div class="grid-cell">35</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="30"></div>
+      <div class="grid-cell">25</div>
+      <div class="grid-cell">20</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="15"></div>
 
-    <!-- Row 3: Life Support Draw -->
-    <div class="grid-label">LIFE SUPP (kW)</div>
-    <div class="grid-cell">10</div>
-    <div class="grid-cell">18</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="26"></div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="34"></div>
-    <div class="grid-cell">42</div>
-    <div class="grid-cell">50</div>
-    <div class="grid-cell">58</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="66"></div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="74"></div>
-    <div class="grid-cell">82</div>
+      <!-- Row 3: Life Support Draw -->
+      <div class="grid-label">LIFE SUPP (kW)</div>
+      <div class="grid-cell">10</div>
+      <div class="grid-cell">18</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="26"></div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="34"></div>
+      <div class="grid-cell">42</div>
+      <div class="grid-cell">50</div>
+      <div class="grid-cell">58</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="66"></div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="74"></div>
+      <div class="grid-cell">82</div>
 
-    <!-- Row 4: Auxiliary Draw -->
-    <div class="grid-label">AUX DRAW (kW)</div>
-    <div class="grid-cell">30</div>
-    <div class="grid-cell">27</div>
-    <div class="grid-cell">24</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="21"></div>
-    <div class="grid-cell">18</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="15"></div>
-    <div class="grid-cell">12</div>
-    <div class="grid-cell"><input type="text" class="puzzle-input" data-answer="9"></div>
-    <div class="grid-cell">6</div>
-    <div class="grid-cell">3</div>
+      <!-- Row 4: Auxiliary Draw -->
+      <div class="grid-label">AUX DRAW (kW)</div>
+      <div class="grid-cell">30</div>
+      <div class="grid-cell">27</div>
+      <div class="grid-cell">24</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="21"></div>
+      <div class="grid-cell">18</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="15"></div>
+      <div class="grid-cell">12</div>
+      <div class="grid-cell"><input type="number" inputmode="numeric" class="puzzle-input" data-answer="9"></div>
+      <div class="grid-cell">6</div>
+      <div class="grid-cell">3</div>
+    </div>
   </div>
 
   <div id="status-feedback" class="error-msg"></div>
 
-  <div style="margin-top: 15px;">
-    <button id="btn-submit-telemetry" style="background: #003311; color: #00ff66; border: 1px solid #00ff66; padding: 10px 24px; font-family: monospace; cursor: pointer; font-weight: bold; margin-right: 10px;">
-      SUBMIT CALIBRATION
+  <div class="telemetry-actions">
+    <button id="btn-submit-telemetry" style="background: #003311; color: #00ff66; border: 1px solid #00ff66; padding: 10px 24px; font-family: monospace; cursor: pointer; font-weight: bold;">
+      SUBMIT RECORDS
     </button>
-    <button id="btn-abort-telemetry" style="background: #220000; color: #ff3333; border: 1px solid #ff3333; padding: 10px 18px; font-family: monospace; cursor: pointer;">
+    <button id="btn-abort-telemetry" style="background: #220000; color: #ff3333; border: 1px solid #ff3333; padding: 10px 18px; font-family: monospace; cursor: pointer; font-weight: bold; margin-left: auto;">
       ABORT
     </button>
   </div>
@@ -167,13 +209,13 @@
 
       if (emptyFound) {
         if (attempts > 2) {
-          feedback.textContent = '[ERROR]: You have note entered a value for one or more fields. \n[HINT]: Check the differences between consecutive days to identify the correct values.';
+          feedback.textContent = '[ERROR]: You have not entered a value for one or more fields.\n[HINT]: Check the differences between consecutive days to identify the correct values.';
         } else {
-          feedback.textContent = '[ERROR]:You have not entered a value for one or more fields.';
+          feedback.textContent = '[ERROR]: You have not entered a value for one or more fields.';
         }
       } else if (!allCorrect) {
         if (attempts > 2) {
-          feedback.textContent = '[ERROR]: One or more fields have been entered incorrectly. Entries with errors have been highlighted. \n[HINT]: Check the differences between consecutive days to identify the correct values.';
+          feedback.textContent = '[ERROR]: One or more fields have been entered incorrectly. Entries with errors have been highlighted.\n[HINT]: Check the differences between consecutive days to identify the correct values.';
         } else {
           feedback.textContent = '[ERROR]: One or more fields have been entered incorrectly. Entries with errors have been highlighted.';
         }

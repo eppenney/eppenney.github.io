@@ -11,11 +11,32 @@
   <style>
     .telemetry-strip {
       display: grid;
-      grid-template-columns: 140px repeat(10, 1fr);
+      grid-template-columns: 140px repeat(10, minmax(36px, 1fr));
       gap: 4px;
       margin-bottom: 15px;
       font-size: 0.85rem;
       text-align: center;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .eq-formula {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    @media (max-width: 600px) {
+      .linear-puzzle-container {
+        padding: 12px !important;
+      }
+      #system-name-label {
+        width: 100%;
+        min-width: 0 !important;
+      }
+      .eq-input {
+        width: 65px;
+        font-size: 16px;
+      }
     }
     .strip-header {
       font-weight: bold;
@@ -107,13 +128,15 @@
   <!-- Target Telemetry Data Strip -->
   <div class="telemetry-strip" id="telemetry-strip"></div>
 
-  <!-- Equation Input Controls -->
+ <!-- Equation Input Controls -->
   <div class="equation-bar">
     <span id="system-name-label" style="font-weight: bold; min-width: 160px;">STATION PWR (%):</span>
-    <span>y =</span>
-    <input type="number" step="any" id="input-m" class="eq-input" placeholder="m">
-    <span>x +</span>
-    <input type="number" step="any" id="input-b" class="eq-input" placeholder="b">
+    <div class="eq-formula">
+      <span>y =</span>
+      <input type="number" step="any" id="input-m" class="eq-input" placeholder="m">
+      <span>x +</span>
+      <input type="number" step="any" id="input-b" class="eq-input" placeholder="b">
+    </div>
     <button id="btn-verify" class="crt-btn" style="margin-left: auto; margin-right: 0;">PLOT &amp; VERIFY</button>
   </div>
 
