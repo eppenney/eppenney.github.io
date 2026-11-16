@@ -575,7 +575,7 @@
                 "'Thanks for the heads up, Pal! Looks like a minor glitch. Nothing to worry about.",
                 "You know what? Why don't you take the rest of the day off? You've earned it!'",
                 "--------------------------------------------------------------------",
-                "That was quick. Would you like to [investigate], or look into the [logs] yourself?"
+                "That was quick. Would you like to [investigate] the odd email, or look into the [logs] yourself?"
             ],
             "commands": [
                 {
@@ -1737,13 +1737,13 @@
             ],
             "commands": [
                 {
-                    "input": ["execute", "plan", "start"],
+                    "input": ["execute", "executing", "plan", "start"],
                     "type": "state",
                     "forbiddenFlags": ["data_restored"],
                     "nextState": "planning_no_timeline"
                 },
                 {
-                    "input": ["evacuate", "people", "station"],
+                    "input": ["evacuate", "people", "evacuating", "station"],
                     "type": "state",
                     "requiredFlags": ["data_restored"],
                     "nextState": "planning_evacuate"
@@ -1834,8 +1834,8 @@
             "content": [
                 "--------------------------------------------------------------------",
                 "You take the next two weeks to convince as many people as you can to leave. With all the evidence you've collected, you gather most crew-members. Disturbingly, you discover several crew-members with devices attached to their heads, robbing them of their free will.",
-                "--------------------------------------------------------------------",
                 "As you and your band of survivors make your way to the escape pods, they launch on their own!",
+                "--------------------------------------------------------------------",
                 "Use the tractor beam to [save] the escape pods!"
             ],
             "commands": [
