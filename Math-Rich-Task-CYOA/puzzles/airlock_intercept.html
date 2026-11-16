@@ -1,0 +1,281 @@
+<div class="airlock-puzzle-container" style="padding: 20px; font-family: monospace; color: #00ff66; max-width: 850px; margin: 0 auto; background: #000a00; border: 1px solid #004400;">
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #00ff66; padding-bottom: 5px; margin-bottom: 15px;">
+    <h3 style="margin: 0;">EMERGENCY AIRLOCK :: PRESSURE EQUALIZATION</h3>
+    <div id="airlock-timer" style="background: #220000; color: #ff3333; border: 1px solid #ff3333; padding: 4px 10px; font-weight: bold; font-size: 1.1rem;">
+      STANDBY
+    </div>
+  </div>
+
+  <!-- Pre-Start Briefing Screen (No Numbers Revealed) -->
+  <div id="airlock-briefing" style="background: #001100; border: 1px solid #004400; padding: 15px; margin-bottom: 15px; line-height: 1.5;">
+    <p style="margin-top: 0;">
+      <strong>[MISSION BRIEFING]:</strong> A scientist is trapped inside a damaged airlock. The hall is leaking air into the airlock - meaning that the airlock is gaining pressure at the same rate the hall is losing pressure. But, the airlock is also losing pressure to a rupture at the same time.
+    </p>
+    <p>
+      <strong>[OBJECTIVE]:</strong> Once you begin, you will receive the initial pressures of each room, and the leak rates. Calculate the exact time (in seconds) from the initial breach when the hall and airlock pressures will equalize so you can safely cycle the doors. 
+    </p>
+    <p style="margin-bottom: 15px; color: #ffaa00;">
+      <strong>[WARNING]:</strong> You have a strict time limit before pressures diverge past safe thresholds, and only 3 manual override attempts.
+    </p>
+    <div style="display: flex; gap: 10px;">
+      <button id="btn-start-airlock" class="airlock-btn">INITIALIZE TELEMETRY &amp; START</button>
+      <button id="btn-abort-briefing" class="airlock-btn" style="background: #220000; color: #ff3333; border-color: #ff3333;">ABORT</button>
+    </div>
+  </div>
+
+  <!-- Active Puzzle Interface (Hidden until Start) -->
+  <div id="airlock-active-ui" style="display: none;">
+    <p style="margin-bottom: 15px; line-height: 1.4;">
+      [CRITICAL ALERT]: Airlock chamber is depressurized. At time of rupture, Airlock fell to 25 kPa. Hall pressure rose to 300 kPa. Hall pressure is bleeding into the airlock at 2 kPa/s, while the airlock is leaking into space at 1.5 kPa/s. 
+      <br><br>
+      <strong>Calculate the exact time (in seconds) when the hall and airlock pressures equalize</strong> so the doors can be safely cycled.
+    </p>
+
+    <!-- Dual Pressure Gauges -->
+    <div class="pressure-gauge-grid">
+      <div class="gauge-card">
+        <div style="font-weight: bold;">ADJACENT HALL PRESSURE</div>
+        <div id="hall-val" style="font-size: 1.4rem; margin-top: 4px;">300.0 kPa</div>
+        <div class="gauge-bar-track">
+          <div id="hall-bar" class="gauge-bar-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+      <div class="gauge-card">
+        <div style="font-weight: bold;">AIRLOCK CHAMBER PRESSURE</div>
+        <div id="airlock-val" style="font-size: 1.4rem; margin-top: 4px;">25.0 kPa</div>
+        <div class="gauge-bar-track">
+          <div id="airlock-bar" class="gauge-bar-fill" style="width: 8.33%; background: #00aa44;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Bar -->
+    <div class="airlock-input-bar">
+      <label for="input-equalize-time" style="font-weight: bold;">Equalization Time (x seconds):</label>
+      <input type="number" step="any" id="input-equalize-time" class="airlock-input" placeholder="sec">
+      <button id="btn-submit-airlock" class="airlock-btn">EXECUTE EQUALIZATION</button>
+      <button id="btn-abort-airlock" class="airlock-btn" style="background: #220000; color: #ff3333; border-color: #ff3333; margin-left: auto;">ABORT</button>
+    </div>
+
+    <div id="airlock-feedback" class="airlock-feedback"></div>
+  </div>
+
+  <style>
+    .pressure-gauge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .gauge-card {
+      background: #001100;
+      border: 1px solid #004400;
+      padding: 12px;
+      text-align: center;
+    }
+    .gauge-bar-track {
+      background: #002200;
+      border: 1px solid #004400;
+      height: 24px;
+      width: 100%;
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .gauge-bar-fill {
+      background: #00ff66;
+      height: 100%;
+      width: 100%;
+      transition: width 0.1s linear;
+    }
+    .airlock-input-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #001500;
+      border: 1px solid #004400;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .airlock-input {
+      width: 100px;
+      background: #002200;
+      color: #00ff66;
+      border: 1px solid #00ff66;
+      font-family: monospace;
+      font-size: 1.1rem;
+      text-align: center;
+      padding: 4px;
+    }
+    .airlock-input:focus {
+      outline: none;
+      background: #003300;
+      border-color: #ffffff;
+    }
+    .airlock-btn {
+      background: #003311;
+      color: #00ff66;
+      border: 1px solid #00ff66;
+      padding: 10px 20px;
+      font-family: monospace;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .airlock-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .airlock-feedback {
+      min-height: 2.8em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      white-space: pre-line;
+    }
+  </style>
+</div>
+
+<script>
+  (function() {
+    const targetTime = 110;
+    const maxTime = 110;
+    let currentTime = 0;
+    let attempts = 0;
+    let timerInterval = null;
+    let isRunning = false;
+
+    const briefingBox = document.getElementById('airlock-briefing');
+    const activeUI = document.getElementById('airlock-active-ui');
+    const btnStart = document.getElementById('btn-start-airlock');
+    const btnAbortBriefing = document.getElementById('btn-abort-briefing');
+
+    const timerDisplay = document.getElementById('airlock-timer');
+    const hallValDisplay = document.getElementById('hall-val');
+    const airlockValDisplay = document.getElementById('airlock-val');
+    const hallBar = document.getElementById('hall-bar');
+    const airlockBar = document.getElementById('airlock-bar');
+    const inputTime = document.getElementById('input-equalize-time');
+    const btnSubmit = document.getElementById('btn-submit-airlock');
+    const btnAbort = document.getElementById('btn-abort-airlock');
+    const feedback = document.getElementById('airlock-feedback');
+
+    function updateGauges(t) {
+      const hallP = Math.max(0, 300 - (2 * t));
+      const airlockP = Math.max(0, 25 + (0.5 * t));
+
+      hallValDisplay.textContent = hallP.toFixed(1) + ' kPa';
+      airlockValDisplay.textContent = airlockP.toFixed(1) + ' kPa';
+
+      hallBar.style.width = Math.max(0, Math.min(100, (hallP / 300) * 100)) + '%';
+      airlockBar.style.width = Math.max(0, Math.min(100, (airlockP / 300) * 100)) + '%';
+
+      const elapsedSec = Math.floor(t);
+      const mins = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+      const secs = String(elapsedSec % 60).padStart(2, '0');
+      timerDisplay.textContent = `TIME: ${mins}:${secs} / 01:50`;
+    }
+
+    function startSimulation() {
+      if (isRunning) return;
+      
+      // Swap briefing view for active puzzle view
+      briefingBox.style.display = 'none';
+      activeUI.style.display = 'block';
+
+      isRunning = true;
+      currentTime = 0;
+      attempts = 0;
+      inputTime.disabled = false;
+      btnSubmit.disabled = false;
+      updateGauges(0);
+      
+      feedback.textContent = '[SYSTEM]: Telemetry active. Pressure exchange in progress...';
+      feedback.style.color = '#00ff66';
+
+      timerInterval = setInterval(() => {
+        currentTime += 0.5;
+        if (currentTime >= maxTime) {
+          currentTime = maxTime;
+          updateGauges(currentTime);
+          clearInterval(timerInterval);
+          failMission('[CRITICAL BREACH]: Airlock pressures failed to synchronize in time.');
+          return;
+        }
+        updateGauges(currentTime);
+      }, 500);
+    }
+
+    function failMission(msg) {
+      isRunning = false;
+      inputTime.disabled = true;
+      btnSubmit.disabled = true;
+      feedback.style.color = '#ff3333';
+      feedback.textContent = msg;
+
+      setTimeout(() => {
+        if (typeof window.completePuzzleModule === 'function') {
+          window.completePuzzleModule('airlock_failed');
+        }
+      }, 2000);
+    }
+
+    function handleAbort() {
+      if (timerInterval) clearInterval(timerInterval);
+      if (typeof window.completePuzzleModule === 'function') {
+        window.completePuzzleModule('airlock_failed');
+      }
+    }
+
+    btnStart.addEventListener('click', startSimulation);
+    btnAbortBriefing.addEventListener('click', handleAbort);
+    btnAbort.addEventListener('click', handleAbort);
+
+    btnSubmit.addEventListener('click', () => {
+      if (!isRunning) return;
+      const userVal = parseFloat(inputTime.value);
+
+      if (isNaN(userVal)) {
+        feedback.style.color = '#ff3333';
+        feedback.textContent = '[ERROR]: Please enter a valid number of seconds.';
+        return;
+      }
+
+      attempts++;
+
+      if (Math.abs(userVal - targetTime) < 0.5) {
+        clearInterval(timerInterval);
+        currentTime = targetTime;
+        updateGauges(currentTime);
+        
+        isRunning = false;
+        inputTime.disabled = true;
+        btnSubmit.disabled = true;
+        feedback.style.color = '#00ff66';
+        feedback.textContent = '[SUCCESS]: Pressures equalized at 80 kPa! Airlock doors cycling.';
+
+        setTimeout(() => {
+          if (typeof window.completePuzzleModule === 'function') {
+            window.completePuzzleModule('airlock_success');
+          }
+        }, 1500);
+      } else {
+        feedback.style.color = '#ff3333';
+        let errText = `[INCORRECT]: Proposed time (${userVal}s) does not match equalization point. Entries remaining: ${3 - attempts}`;
+        if (attempts >= 1) {
+            errText += '\n[HINT]: The hall is leaking into the airlock at a rate of 2 kPa per second, and the airlock is leaking into space at a rate of 1.5 kPa per second.\nThis means the airlock is gaining are at a rate of: 2x - 1.5x'
+        }
+
+        if (attempts >= 2) {
+          errText += `\n[HINT]: Set up your rate equations:\nHall: y = 300 - 2x\nAirlock: y = 25 + 0.5x\nSolve 300 - 2x = 25 + 0.5x for x.`;
+        }
+
+        feedback.textContent = errText;
+
+        if (attempts >= 3) {
+          clearInterval(timerInterval);
+          failMission('[CRITICAL FAILURE]: Maximum calculation attempts exceeded. Airlock control lockout initiated.');
+        }
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,287 @@
+<div class="pod-puzzle-container" style="padding: 20px; font-family: monospace; color: #00ff66; max-width: 850px; margin: 0 auto; background: #000a00; border: 1px solid #004400;">
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #00ff66; padding-bottom: 5px; margin-bottom: 15px;">
+    <h3 style="margin: 0;">TRACTOR BEAM :: ESCAPE POD INTERCEPT</h3>
+    <div id="pod-timer" style="background: #220000; color: #ff3333; border: 1px solid #ff3333; padding: 4px 10px; font-weight: bold; font-size: 1.1rem;">
+      STANDBY
+    </div>
+  </div>
+
+  <!-- Pre-Start Briefing Screen (No Numbers Revealed) -->
+  <div id="pod-briefing" style="background: #001100; border: 1px solid #004400; padding: 15px; margin-bottom: 15px; line-height: 1.5;">
+    <p style="margin-top: 0;">
+      <strong>[MISSION BRIEFING]:</strong> An escape pod was ejected from the station into open space and is currently drifting away at a constant velocity. 
+    </p>
+    <p>
+      <strong>[OBJECTIVE]:</strong> The ship's tractor beam requires a specific charge duration before it can teleport the pod back. Once diagnostic initializes, calculate how far away (in meters) the escape pod will be from the station when the beam finishes charging and recharges.
+    </p>
+    <p style="margin-bottom: 15px; color: #ffaa00;">
+      <strong>[WARNING]:</strong> You have a strict time limit before the pod drifts out of maximum sensor range, and only 3 manual calculation attempts.
+    </p>
+    <div style="display: flex; gap: 10px;">
+      <button id="btn-start-pod" class="pod-btn">INITIALIZE &amp; START</button>
+      <button id="btn-abort-briefing" class="pod-btn" style="background: #220000; color: #ff3333; border-color: #ff3333;">ABORT</button>
+    </div>
+  </div>
+
+  <!-- Active Puzzle Interface (Hidden until Start) -->
+  <div id="pod-active-ui" style="display: none;">
+    <p style="margin-bottom: 15px; line-height: 1.4;">
+      [CRITICAL ALERT]: Escape pod was ejected <strong>12 seconds ago</strong>, and has been traveling at <strong>3 meters / second</strong>. The tractor beam will take <strong>90 seconds</strong> to charge. 
+      <br><br>
+      <strong>Determine how many meters away from the ship the escape pod will be</strong> when the tractor beam recharges (at total time C = A + B seconds from ejection).
+    </p>
+
+    <!-- Graphical Tracking Canvas -->
+    <div class="chart-wrapper" style="position: relative; height: 160px; width: 100%; background: #000a00; border: 1px solid #004400; padding: 10px; box-sizing: border-box; margin-bottom: 15px;">
+      <canvas id="pod-canvas" width="750" height="140" style="width: 100%; height: 100%; display: block;"></canvas>
+    </div>
+
+    <!-- Input Bar -->
+    <div class="pod-input-bar" style="display: flex; align-items: center; gap: 10px; background: #001500; border: 1px solid #004400; padding: 12px 15px; margin-bottom: 15px; flex-wrap: wrap;">
+      <label for="input-pod-distance" style="font-weight: bold;">Intercept Distance (meters):</label>
+      <input type="number" step="any" id="input-pod-distance" class="pod-input" placeholder="meters" style="width: 100px; background: #002200; color: #00ff66; border: 1px solid #00ff66; font-family: monospace; font-size: 1.1rem; text-align: center; padding: 4px;">
+      <button id="btn-submit-pod" class="pod-btn">EXECUTE TRACTOR BEAM</button>
+      <button id="btn-abort-pod" class="pod-btn" style="background: #220000; color: #ff3333; border-color: #ff3333; margin-left: auto;">ABORT</button>
+    </div>
+
+    <div id="pod-feedback" class="pod-feedback" style="min-height: 2.8em; font-weight: bold; margin-bottom: 15px; white-space: pre-line;"></div>
+  </div>
+
+  <style>
+    .pod-btn {
+      background: #003311;
+      color: #00ff66;
+      border: 1px solid #00ff66;
+      padding: 10px 20px;
+      font-family: monospace;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .pod-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .pod-input:focus {
+      outline: none;
+      background: #003300;
+      border-color: #ffffff;
+    }
+  </style>
+</div>
+
+<script>
+  (function() {
+    const chargeTime = 90;   // A = 90 seconds to charge
+    const elapsedAgo = 12;   // B = 12 seconds ago ejected
+    const totalTimeC = chargeTime + elapsedAgo; // C = 102 seconds
+    const speedD = 3;
+    const targetDistance = totalTimeC * speedD; // 306 meters
+
+    // Canvas coordinate mapping setup
+    const stationPos = 50;
+    const targetPos = 520; // Pixel center of target zone
+    const trackLengthToTarget = targetPos - stationPos;
+    const metersToPixels = trackLengthToTarget / targetDistance;
+    const circleRadiusPx = 18;
+    const circleRadiusMeters = circleRadiusPx / metersToPixels;
+
+    // Exact time when the pod crosses the outer edge of the circle radius
+    const maxFailTime = (targetDistance + circleRadiusMeters) / speedD; 
+    
+    let currentTimerSec = 0;
+    let attempts = 0;
+    let timerInterval = null;
+    let isRunning = false;
+
+    const briefingBox = document.getElementById('pod-briefing');
+    const activeUI = document.getElementById('pod-active-ui');
+    const btnStart = document.getElementById('btn-start-pod');
+    const btnAbortBriefing = document.getElementById('btn-abort-briefing');
+
+    const timerDisplay = document.getElementById('pod-timer');
+    const inputDistance = document.getElementById('input-pod-distance');
+    const btnSubmit = document.getElementById('btn-submit-pod');
+    const btnAbort = document.getElementById('btn-abort-pod');
+    const feedback = document.getElementById('pod-feedback');
+    const canvas = document.getElementById('pod-canvas');
+
+    function drawGraphic(currentSec) {
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw X-axis line
+      ctx.strokeStyle = '#004400';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(stationPos, height / 2);
+      ctx.lineTo(width - 50, height / 2);
+      ctx.stroke();
+
+      const currentDistanceMeters = currentSec * speedD;
+      const currentPos = stationPos + (currentDistanceMeters * metersToPixels);
+      const currentDistVal = Math.round(currentDistanceMeters);
+
+      // Draw Station Dot at origin (0m)
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(stationPos, height / 2, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Station Label & Value
+      ctx.fillStyle = '#00ff66';
+      ctx.font = '11px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText('STATION', stationPos - 15, (height / 2) + 25);
+      ctx.fillText('0m', stationPos - 5, (height / 2) - 12);
+
+      // Draw target dotted circle position at the exact intercept distance (306m)
+      ctx.strokeStyle = '#00ff66';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.arc(targetPos, height / 2, circleRadiusPx, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]); // reset
+
+      // Intercept Zone Label positioned directly under the target circle
+      ctx.textAlign = 'center';
+      ctx.fillText('INTERCEPT ZONE', targetPos, (height / 2) + 32);
+      ctx.textAlign = 'left'; // reset
+
+      // Draw trail line between station and current pod position
+      ctx.strokeStyle = 'rgba(0, 255, 102, 0.5)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(stationPos, height / 2);
+      ctx.lineTo(currentPos, height / 2);
+      ctx.stroke();
+
+      // Draw moving escape pod point
+      ctx.fillStyle = currentSec > totalTimeC ? '#ff3333' : '#00ff66';
+      ctx.beginPath();
+      ctx.arc(currentPos, height / 2, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw live distance text above the moving pod dot
+      ctx.fillStyle = currentSec > totalTimeC ? '#ff3333' : '#00ff66';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(currentDistVal + 'm', currentPos, (height / 2) - 12);
+      ctx.textAlign = 'left'; // reset
+    }
+
+    function startSimulation() {
+      if (isRunning) return;
+      
+      briefingBox.style.display = 'none';
+      activeUI.style.display = 'block';
+
+      // Force immediate canvas render frame once visible
+      setTimeout(() => drawGraphic(0), 10);
+
+      isRunning = true;
+      currentTimerSec = 0;
+      attempts = 0;
+      inputDistance.disabled = false;
+      btnSubmit.disabled = false;
+      
+      feedback.textContent = '[SYSTEM]: Tractor beam charging sequence initiated. Tracking pod drift...';
+      feedback.style.color = '#00ff66';
+
+      const startTime = Date.now();
+
+      timerInterval = setInterval(() => {
+        const elapsedRealSec = (Date.now() - startTime) / 1000;
+        currentTimerSec = elapsedRealSec;
+
+        // Countdown timer matching maxFailTime down to 00:00 at outer radius
+        const remainingSec = Math.max(0, maxFailTime - currentTimerSec);
+        const mins = String(Math.floor(remainingSec / 60)).padStart(2, '0');
+        const secs = String(Math.floor(remainingSec % 60)).padStart(2, '0');
+        timerDisplay.textContent = `TIME REMAINING: ${mins}:${secs}`;
+
+        drawGraphic(currentTimerSec);
+
+        if (currentTimerSec >= maxFailTime) {
+          clearInterval(timerInterval);
+          failMission('[CRITICAL BREACH]: Escape pod crossed outer sensor radius and drifted out of range!');
+        }
+      }, 100);
+    }
+
+    function failMission(msg) {
+      isRunning = false;
+      inputDistance.disabled = true;
+      btnSubmit.disabled = true;
+      feedback.style.color = '#ff3333';
+      feedback.textContent = msg;
+
+      setTimeout(() => {
+        if (typeof window.completePuzzleModule === 'function') {
+          window.completePuzzleModule('escape_pod_failure');
+        }
+      }, 2000);
+    }
+
+    function handleAbort() {
+      if (timerInterval) clearInterval(timerInterval);
+      if (typeof window.completePuzzleModule === 'function') {
+        window.completePuzzleModule('escape_pod_failure');
+      }
+    }
+
+    btnStart.addEventListener('click', startSimulation);
+    btnAbortBriefing.addEventListener('click', handleAbort);
+    btnAbort.addEventListener('click', handleAbort);
+
+    btnSubmit.addEventListener('click', () => {
+      if (!isRunning) return;
+      const userVal = parseFloat(inputDistance.value);
+
+      if (isNaN(userVal)) {
+        feedback.style.color = '#ff3333';
+        feedback.textContent = '[ERROR]: Please enter a valid distance in meters.';
+        return;
+      }
+
+      attempts++;
+
+      if (Math.abs(userVal - targetDistance) < 1.0) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        inputDistance.disabled = true;
+        btnSubmit.disabled = true;
+        drawGraphic(totalTimeC); // Snap graphic exactly to target center
+
+        feedback.style.color = '#00ff66';
+        feedback.textContent = `[SUCCESS]: Intercept calculated precisely at ${targetDistance} meters! Tractor beam locked and firing. Escape pod successfully retrieved.`;
+
+        setTimeout(() => {
+          if (typeof window.completePuzzleModule === 'function') {
+            window.completePuzzleModule('esscape_pod_success');
+          }
+        }, 1500);
+      } else {
+        feedback.style.color = '#ff3333';
+        let errText = `[INCORRECT]: Distance (${userVal}m) does not match target. Entries remaining: ${3 - attempts}`;
+        
+        if (attempts >= 1) {
+          errText += `\n[HINT]: Total time C = charge time (A) + time since ejection (B) = 90 + 12 = 102 seconds.`;
+        }
+        if (attempts >= 2) {
+          errText += `\n[HINT]: Multiply total time by speed D: 102 seconds * 3 meters/second.`;
+        }
+
+        feedback.textContent = errText;
+
+        if (attempts >= 3) {
+          clearInterval(timerInterval);
+          failMission('[CRITICAL FAILURE]: Maximum calculation attempts exceeded. Tractor beam control lockout initiated.');
+        }
+      }
+    });
+  })();
+</script>

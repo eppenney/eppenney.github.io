@@ -1,0 +1,421 @@
+```html
+<div class="cargo-puzzle-container" style="padding: 20px; font-family: monospace; color: #00ff66; max-width: 900px; margin: 0 auto; background: #000a00; border: 1px solid #004400;">
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #00ff66; padding-bottom: 5px; margin-bottom: 15px;">
+    <h3 style="margin: 0;">CARGO MANIFEST :: IMPERIUM SORTING &amp; AUDIT</h3>
+    <div id="cargo-timer" style="background: #220000; color: #ff3333; border: 1px solid #ff3333; padding: 4px 10px; font-weight: bold; font-size: 1.1rem;">
+      STANDBY
+    </div>
+  </div>
+
+  <!-- Pre-Start Briefing Screen -->
+  <div id="cargo-briefing" style="background: #001100; border: 1px solid #004400; padding: 15px; margin-bottom: 15px; line-height: 1.5;">
+    <p style="margin-top: 0;">
+      <strong>[MISSION BRIEFING]:</strong> The scientist noticed discrepancies in the cargo manifests, and luckily we can use the Imperium's standard shipping units to figure out what doesn't belong.
+    </p>
+    <p>
+      <strong>[OBJECTIVE]:</strong> Select crates from the ship's hold to inspect their effect on total manifest weight. Determine the weight difference and sort them into the correct category bin based on known unit weights. Unrecognized crates that match no standard weight must go to the <strong>UNKNOWN</strong> bin. Finally, calculate the unit weight of the unknown items to balance the manifest.
+    </p>
+    <p style="margin-bottom: 15px; color: #ffaa00;">
+      <strong>[WARNING]:</strong> You have a strict time limit before customs locks the manifest, and limited calculation attempts for the final audit.
+    </p>
+    <div style="display: flex; gap: 10px;">
+      <button id="btn-start-cargo" class="cargo-btn">INITIALIZE MANIFEST &amp; START</button>
+      <button id="btn-abort-briefing" class="cargo-btn" style="background: #220000; color: #ff3333; border-color: #ff3333;">ABORT</button>
+    </div>
+  </div>
+
+  <!-- Phase 1: Sorting Interface (Hidden until Start) -->
+  <div id="cargo-phase-1" style="display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #001500; border: 1px solid #004400; padding: 10px 15px; flex-wrap: wrap; gap: 10px;">
+      <div><strong>TOTAL MANIFEST WEIGHT:</strong> <span id="total-weight-display" style="font-size: 1.3rem; color: #ffffff;">1790</span> kg</div>
+      <div id="dynamic-equation-display" style="font-size: 1.1rem; color: #ffaa00; font-weight: bold;">0X + 1690 = 1690 kg</div>
+      <div id="sort-status" style="font-size: 0.9rem; color: #00ff66;">Crates remaining: <span id="crates-left">15</span></div>
+    </div>
+
+    <div class="cargo-workspace" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+      <!-- Ship Hold Grid -->
+      <div style="background: #001100; border: 1px solid #004400; padding: 12px;">
+        <div style="font-weight: bold; border-bottom: 1px solid #004400; padding-bottom: 4px; margin-bottom: 10px;">SHIP CARGO HOLD (UNSORTED)</div>
+        <div id="ship-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; min-height: 180px;">
+          <!-- Dynamically populated cargo boxes -->
+        </div>
+      </div>
+
+      <!-- Category Bins (Static Randomized Order & Visible Weights) -->
+      <div style="background: #001100; border: 1px solid #004400; padding: 12px;">
+        <div style="font-weight: bold; border-bottom: 1px solid #004400; padding-bottom: 4px; margin-bottom: 10px;">CATEGORY BINS (CLICK TO SORT)</div>
+        <div id="category-bins" style="display: flex; flex-direction: column; gap: 5px;">
+          <!-- Populated dynamically via JS in static random order -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Inspection Bay -->
+    <div id="inspection-bay" style="background: #001500; border: 1px solid #004400; padding: 12px; margin-bottom: 15px; text-align: center;">
+      <div id="inspection-content" style="color: #ffaa00; font-weight: bold;">[INSPECTION BAY]: Click a crate from the ship hold to inspect manifest weight delta.</div>
+    </div>
+
+    <div id="sort-feedback" style="min-height: 1.5em; font-weight: bold; margin-bottom: 10px;"></div>
+  </div>
+
+  <!-- Phase 2: Equation Audit Interface (Hidden initially) -->
+  <div id="cargo-phase-2" style="display: none; background: #001100; border: 1px solid #004400; padding: 15px; margin-bottom: 15px; text-align: center;">
+    <h4 style="margin-top: 0; border-bottom: 1px solid #00ff66; padding-bottom: 5px; text-align: left;">MANIFEST AUDIT :: UNKNOWN RECONCILIATION</h4>
+    <p style="line-height: 1.4; text-align: left;">
+      All standard cargo items have been successfully sorted and accounted for. However, exactly <strong>3 UNKNOWN crates</strong> remain in quarantine, accounting for the remaining weight discrepancy.
+    </p>
+    
+    <!-- Big Text Equation Display -->
+    <div style="font-size: 2.2rem; color: #ffffff; font-weight: bold; margin: 20px 0; letter-spacing: 2px;">
+      3X = 330
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #001500; border: 1px solid #004400; padding: 12px 15px; margin-bottom: 15px; flex-wrap: wrap;">
+      <label for="input-unknown-val" style="font-weight: bold;">Unknown Unit Weight (X kg):</label>
+      <input type="number" step="any" id="input-unknown-val" class="cargo-input" placeholder="kg" style="width: 100px; background: #002200; color: #00ff66; border: 1px solid #00ff66; font-family: monospace; font-size: 1.1rem; text-align: center; padding: 4px;">
+      <button id="btn-submit-audit" class="cargo-btn">SUBMIT AUDIT</button>
+    </div>
+    <div id="audit-feedback" style="min-height: 2.5em; font-weight: bold; white-space: pre-line; text-align: left;"></div>
+  </div>
+
+  <div>
+    <button id="btn-abort-cargo" class="cargo-btn" style="background: #220000; color: #ff3333; border-color: #ff3333;">ABORT</button>
+  </div>
+
+  <style>
+    .cargo-btn {
+      background: #003311;
+      color: #00ff66;
+      border: 1px solid #00ff66;
+      padding: 10px 20px;
+      font-family: monospace;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .cargo-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .cargo-input:focus {
+      outline: none;
+      background: #003300;
+      border-color: #ffffff;
+    }
+    .cargo-box {
+      background: #002200;
+      border: 1px solid #00ff66;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.8rem;
+      user-select: none;
+      transition: background 0.1s;
+    }
+    .cargo-box:hover {
+      background: #004400;
+    }
+    .cargo-box.selected {
+      background: #005522;
+      border-color: #ffffff;
+      box-shadow: 0 0 6px #00ff66;
+    }
+    .bin-target {
+      background: #002200;
+      border: 1px solid #005500;
+      padding: 6px 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      transition: background 0.1s;
+    }
+    .bin-target:hover {
+      background: #003311;
+      border-color: #00ff66;
+    }
+  </style>
+</div>
+
+<script>
+  (function() {
+    const categoryWeights = {
+      "Food": 50,
+      "Fuel": 120,
+      "Steel": 200,
+      "Textiles": 30,
+      "Machinery": 350,
+      "Compute": 80,
+      "Unknown": 110
+    };
+
+    let cargoItems = [
+      { id: 1, type: "Food", name: "Crate #1", weight: 50 },
+      { id: 7, type: "Steel", name: "Crate #2", weight: 200 },
+      { id: 10, type: "Machinery", name: "Crate #3", weight: 350 },
+      { id: 13, type: "Unknown", name: "Crate #4", weight: 110 },
+      { id: 11, type: "Compute", name: "Crate #5", weight: 80 },
+      { id: 8, type: "Textiles", name: "Crate #6", weight: 30 },
+      { id: 15, type: "Unknown", name: "Crate #7", weight: 110 },
+      { id: 3, type: "Food", name: "Crate #8", weight: 50 },
+      { id: 4, type: "Fuel", name: "Crate #9", weight: 120 },
+      { id: 6, type: "Steel", name: "Crate #10", weight: 200 },
+      { id: 5, type: "Fuel", name: "Crate #11", weight: 120 },
+      { id: 2, type: "Food", name: "Crate #12", weight: 50 },
+      { id: 9, type: "Textiles", name: "Crate #13", weight: 30 },
+      { id: 12, type: "Compute", name: "Crate #14", weight: 80 },
+      { id: 14, type: "Unknown", name: "Crate #15", weight: 110 }
+    ];
+
+    let currentTotalWeight = cargoItems.reduce((acc, item) => acc + item.weight, 0); // 1790 kg
+    let activeInspectedItem = null;
+    let counts = { Food: 0, Fuel: 0, Steel: 0, Textiles: 0, Machinery: 0, Compute: 0, Unknown: 0 };
+    
+    // Equation tracking variables
+    let nUnknowns = 0;
+    let targetRightWeight = 1690;
+
+    const maxTimeSec = 180;
+    let currentTimeSec = 0;
+    let timerInterval = null;
+    let isRunning = false;
+    let auditAttempts = 0;
+
+    const briefingBox = document.getElementById('cargo-briefing');
+    const phase1Box = document.getElementById('cargo-phase-1');
+    const phase2Box = document.getElementById('cargo-phase-2');
+    const btnStart = document.getElementById('btn-start-cargo');
+    const btnAbortBriefing = document.getElementById('btn-abort-briefing');
+    const btnAbortCargo = document.getElementById('btn-abort-cargo');
+    const timerDisplay = document.getElementById('cargo-timer');
+    const shipGrid = document.getElementById('ship-grid');
+    const totalWeightDisplay = document.getElementById('total-weight-display');
+    const dynamicEquationDisplay = document.getElementById('dynamic-equation-display');
+    const cratesLeftDisplay = document.getElementById('crates-left');
+    const inspectionContent = document.getElementById('inspection-content');
+    const sortFeedback = document.getElementById('sort-feedback');
+    const categoryBinsContainer = document.getElementById('category-bins');
+    const inputUnknown = document.getElementById('input-unknown-val');
+    const btnSubmitAudit = document.getElementById('btn-submit-audit');
+    const auditFeedback = document.getElementById('audit-feedback');
+
+    // Static randomized order for bins (deterministic shuffle once per load)
+    const staticCategories = ["Compute", "Food", "Unknown", "Steel", "Textiles", "Machinery", "Fuel"];
+
+    function renderStaticBins() {
+      categoryBinsContainer.innerHTML = '';
+      staticCategories.forEach(cat => {
+        const bin = document.createElement('div');
+        bin.className = 'bin-target';
+        bin.dataset.category = cat;
+        const weightLabel = cat === "Unknown" ? "(? kg/u)" : `(${categoryWeights[cat]} kg/u)`;
+        bin.innerHTML = `<span>${cat.toUpperCase()} ${weightLabel}</span><span class="bin-count" data-cat="${cat}">${counts[cat]}</span>`;
+        
+        bin.addEventListener('click', () => {
+          if (activeInspectedItem) {
+            sortItemIntoCategory(cat);
+          } else {
+            sortFeedback.style.color = '#ffaa00';
+            sortFeedback.textContent = `[INFO]: Select a crate from the ship hold first to inspect its weight delta.`;
+          }
+        });
+
+        categoryBinsContainer.appendChild(bin);
+      });
+    }
+
+    function updateEquationDisplay() {
+      dynamicEquationDisplay.textContent = `${nUnknowns}X + ${targetRightWeight} = ${targetRightWeight} kg`;
+    }
+
+    function renderShipGrid() {
+      shipGrid.innerHTML = '';
+      cargoItems.forEach(item => {
+        const box = document.createElement('div');
+        box.className = 'cargo-box' + (activeInspectedItem && activeInspectedItem.id === item.id ? ' selected' : '');
+        box.textContent = item.name;
+        box.dataset.id = item.id;
+
+        box.addEventListener('click', () => {
+          activeInspectedItem = item;
+          renderShipGrid();
+          updateInspectionBay();
+          sortFeedback.style.color = '#00ff66';
+          sortFeedback.textContent = `[INSPECTING]: ${item.name} selected. Check manifest delta below, then click a category bin.`;
+        });
+
+        shipGrid.appendChild(box);
+      });
+      cratesLeftDisplay.textContent = cargoItems.length;
+      totalWeightDisplay.textContent = currentTotalWeight;
+    }
+
+    function updateInspectionBay() {
+      if (!activeInspectedItem) {
+        inspectionContent.innerHTML = '[INSPECTION BAY]: Click a crate from the ship hold to inspect manifest weight delta.';
+        return;
+      }
+      const beforeWeight = currentTotalWeight;
+      const afterWeight = currentTotalWeight - activeInspectedItem.weight;
+      inspectionContent.innerHTML = `
+        <span style="color: #ffffff;">Inspected Crate:</span> ${activeInspectedItem.name} &nbsp;|&nbsp; 
+        <span style="color: #ffffff;">Manifest Delta:</span> ${beforeWeight} kg ➔ ${afterWeight} kg
+      `;
+    }
+
+    function sortItemIntoCategory(category) {
+      if (!activeInspectedItem) return;
+
+      const standardWeight = categoryWeights[category];
+      
+      if (category !== "Unknown" && activeInspectedItem.weight !== standardWeight) {
+        sortFeedback.style.color = '#ff3333';
+        sortFeedback.textContent = `[ERROR]: Mismatch! This crate does not belong in ${category}. Check the weight delta.`;
+        return;
+      }
+
+      if (category === "Unknown" && activeInspectedItem.weight !== categoryWeights["Unknown"]) {
+        sortFeedback.style.color = '#ff3333';
+        sortFeedback.textContent = `[ERROR]: This crate matches a standard category weight and cannot be classified as Unknown.`;
+        return;
+      }
+
+      // Update total manifest weight
+      currentTotalWeight -= activeInspectedItem.weight;
+      counts[category]++;
+      document.querySelector(`.bin-count[data-cat="${category}"]`).textContent = counts[category];
+
+      // Update Equation parameters based on item type
+      if (category === "Unknown") {
+        nUnknowns++;
+      } else {
+        targetRightWeight -= activeInspectedItem.weight;
+      }
+      updateEquationDisplay();
+
+      cargoItems = cargoItems.filter(i => i.id !== activeInspectedItem.id);
+      activeInspectedItem = null;
+      
+      updateInspectionBay();
+      renderShipGrid();
+
+      sortFeedback.style.color = '#00ff66';
+      sortFeedback.textContent = `[SUCCESS]: Crate successfully sorted into ${category}.`;
+
+      if (cargoItems.length === 0) {
+        transitionToPhase2();
+      }
+    }
+
+    function transitionToPhase2() {
+      phase1Box.style.display = 'none';
+      phase2Box.style.display = 'block';
+      auditFeedback.style.color = '#00ff66';
+      auditFeedback.textContent = `[MANIFEST AUDIT]: Cargo hold empty. Remaining unaccounted weight is currently tracked in Unknown bins.`;
+    }
+
+    function startSimulation() {
+      if (isRunning) return;
+      briefingBox.style.display = 'none';
+      phase1Box.style.display = 'block';
+
+      isRunning = true;
+      currentTotalWeight = cargoItems.reduce((acc, item) => acc + item.weight, 0);
+      nUnknowns = 0;
+      targetRightWeight = 1690;
+      renderStaticBins();
+      renderShipGrid();
+      updateInspectionBay();
+      updateEquationDisplay();
+
+      const startTime = Date.now();
+      timerInterval = setInterval(() => {
+        const elapsedRealSec = (Date.now() - startTime) / 1000;
+        currentTimeSec = elapsedRealSec;
+
+        const remainingSec = Math.max(0, maxTimeSec - currentTimeSec);
+        const mins = String(Math.floor(remainingSec / 60)).padStart(2, '0');
+        const secs = String(Math.floor(remainingSec % 60)).padStart(2, '0');
+        timerDisplay.textContent = `TIME REMAINING: ${mins}:${secs}`;
+
+        if (currentTimeSec >= maxTimeSec) {
+          clearInterval(timerInterval);
+          failMission('[CRITICAL BREACH]: Customs lock-out initiated! Time expired before sorting completed.');
+        }
+      }, 200);
+    }
+
+    function failMission(msg) {
+      isRunning = false;
+      if (timerInterval) clearInterval(timerInterval);
+      phase1Box.style.display = 'none';
+      phase2Box.style.display = 'none';
+      briefingBox.style.display = 'block';
+      briefingBox.innerHTML = `<p style="color: #ff3333; font-weight: bold;">${msg}</p><button id="btn-restart-cargo" class="cargo-btn">RETRY MANIFEST</button>`;
+      document.getElementById('btn-restart-cargo').addEventListener('click', () => {
+        location.reload();
+      });
+
+      setTimeout(() => {
+        if (typeof window.completePuzzleModule === 'function') {
+          window.completePuzzleModule('cargo_sorted_failed');
+        }
+      }, 1500);
+    }
+
+    function handleAbort() {
+      if (timerInterval) clearInterval(timerInterval);
+      if (typeof window.completePuzzleModule === 'function') {
+        window.completePuzzleModule('supply_sheet_failed');
+      }
+    }
+
+    btnStart.addEventListener('click', startSimulation);
+    btnAbortBriefing.addEventListener('click', handleAbort);
+    btnAbortCargo.addEventListener('click', handleAbort);
+
+    btnSubmitAudit.addEventListener('click', () => {
+      if (!isRunning) return;
+      const userVal = parseFloat(inputUnknown.value);
+
+      if (isNaN(userVal)) {
+        auditFeedback.style.color = '#ff3333';
+        auditFeedback.textContent = '[ERROR]: Please enter a valid numeric weight for X.';
+        return;
+      }
+
+      auditAttempts++;
+      const targetWeight = 110;
+
+      if (Math.abs(userVal - targetWeight) < 0.1) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        inputUnknown.disabled = true;
+        btnSubmitAudit.disabled = true;
+
+        auditFeedback.style.color = '#00ff66';
+        auditFeedback.textContent = `[SUCCESS]: Audit verified! Each unknown unit is exactly ${targetWeight} kg ($3 \times 110 = 330$ kg). Manifest fully reconciled.`;
+
+        setTimeout(() => {
+          if (typeof window.completePuzzleModule === 'function') {
+            window.completePuzzleModule('supply_sheet_success');
+          }
+        }, 1500);
+      } else {
+        auditFeedback.style.color = '#ff3333';
+        let errText = `[INCORRECT]: Weight (${userVal} kg) does not balance the remaining manifest. Attempts remaining: ${3 - auditAttempts}`;
+        
+        if (auditAttempts >= 2) {
+          errText += `\n[HINT]: Divide the total weight left in the unknown bins (330 kg) by the number of unknown crates (3 boxes).`;
+        }
+
+        auditFeedback.textContent = errText;
+
+        if (auditAttempts >= 3) {
+          clearInterval(timerInterval);
+          failMission('[CRITICAL FAILURE]: Maximum calculation attempts exceeded. Customs seizure ordered.');
+        }
+      }
+    });
+  })();
+</script>
+
+```

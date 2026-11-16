@@ -49,7 +49,7 @@
     let pendingReset = false;
 
     // Local Storage Key
-    const SAVE_KEY = 'outer11_terminal_save';
+    let saveKey = 'default_save_key';
 
     // Line Timing Controls (milliseconds)
     const BASE_LINE_DELAY = 60;
@@ -106,11 +106,11 @@
         gameFlags: gameFlags,
         timestamp: Date.now()
       };
-      localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+      localStorage.setItem(saveKey, JSON.stringify(payload));
     }
 
     function loadGameState() {
-      const raw = localStorage.getItem(SAVE_KEY);
+      const raw = localStorage.getItem(saveKey);
       if (!raw) return null;
       try {
         return JSON.parse(raw);
@@ -228,26 +228,34 @@
         if (state.dynamicLines && Array.isArray(state.dynamicLines)) {
           state.dynamicLines.forEach(item => {
             if (item.token) {
-              const lineIndex = linesToPrint.indexOf(item.token);
-              if (lineIndex !== -1) {
-                let chosenText = item.defaultText || '';
+              let chosenText = item.defaultText !== undefined ? item.defaultText : '';
 
-                if (item.rules && Array.isArray(item.rules)) {
-                  for (const rule of item.rules) {
-                    const flagList = Array.isArray(rule.flags) ? rule.flags : [rule.flags];
-                    const match = rule.condition === 'all' 
-                      ? flagList.every(hasFlag) 
-                      : flagList.some(hasFlag);
+              if (item.rules && Array.isArray(item.rules)) {
+                for (const rule of item.rules) {
+                  const flagList = Array.isArray(rule.flags) ? rule.flags : [rule.flags];
+                  const match = rule.condition === 'all' 
+                    ? flagList.every(hasFlag) 
+                    : flagList.some(hasFlag);
 
-                    if (match) {
-                      chosenText = rule.text;
-                      break;
-                    }
+                  if (match) {
+                    chosenText = rule.text;
+                    break;
                   }
                 }
-
-                linesToPrint[lineIndex] = chosenText;
               }
+
+              // Iterate through every line and replace the token wherever it appears
+              linesToPrint = linesToPrint.flatMap(line => {
+                if (typeof line === 'string' && line.includes(item.token)) {
+                  // If chosenText is an array, we can spread multiple lines in its place
+                  if (Array.isArray(chosenText)) {
+                    return chosenText.map(tLine => line.replace(item.token, tLine));
+                  } else {
+                    return [line.replace(item.token, chosenText)];
+                  }
+                }
+                return [line];
+              });
             }
           });
         }
@@ -289,7 +297,7 @@
       if (pendingReset) {
         pendingReset = false;
         if (['y', 'yes', 'confirm'].includes(normalizedInput)) {
-          localStorage.removeItem(SAVE_KEY);
+          localStorage.removeItem(saveKey);
           gameFlags = getInitialGameFlags();
           terminalContent.innerHTML = '';
           appendSystemResponse([
@@ -415,7 +423,7 @@
     });
 
     window.addEventListener('DOMContentLoaded', () => {
-      fetch('scenario-1-space-station.json')
+      fetch('scenario-2-space-station-v2.json')
         .then(response => {
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           return response.json();
@@ -423,6 +431,11 @@
         .then(data => {
           scenarioData = data;
           if (data.title) document.title = data.title;
+
+          // Generate a unique local storage key based on the scenario title
+          const safeTitleSlug = (data.title || 'default_scenario').toLowerCase().replace(/[^a-z0-9]/g, '_');
+          saveKey = `save_file_${safeTitleSlug}`;
+
           gameFlags = getInitialGameFlags();
 
           const saved = loadGameState();

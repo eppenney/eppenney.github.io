@@ -1,0 +1,2031 @@
+{
+    "title": "Combined Facility Outer-11 CYOA Rich Task",
+    "initialState": "welcome",
+    "initialFlags": ["tutorial"],
+    "defaultUnrecognized": "Your command was not recognized. Type [help] for a list of valid commands.", 
+    "states": {
+        "welcome": {
+            "type": "text",
+            "content": [
+                "====================================================================",
+                " _  _  _ _____ _   _   ___  __  ___  _____ ",
+                " | || || | ____| | | |/ _ \\|  \\/  |/ _ \\ ",
+                " | || || |  _| | | | | | | | |\\/| |  __/ ",
+                " | || || | |___| |_| | |_| | |  | | |___ ",
+                "  \\_/\\_/|_____|\\___/ \\___/|_|  |_|\\____| ",
+                "                                         ",
+                "====================================================================",
+                "{TUTORIAL_TEXT}",
+                "Type [begin] to start the scenario or [help] for a list of commands."
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TUTORIAL_TEXT}",
+                    "defaultText": "\n",
+                    "rules": [
+                        {
+                            "flags": ["tutorial"],
+                            "condition": "any",
+                            "text": [
+                                "This is a Choose Your Own Adventure (CYOA) style rich task.",
+                                "You will be presented with a scenario and a series of choices.",
+                                "Your goal is to navigate through the scenario by making decisions that will lead you to a successful outcome. Pay attention to the information provided, as it may help you make informed choices.",
+                                "Generally speaking, commands will be enclosed in square brackets, e.g., [command]. After reading the context, type out your desired command and press enter.",
+                                "You don't need to worry about capitalizing your commands.",
+                                "You can also type [help] to see a list of available commands at any time.",
+                                "===================================================================="
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [BEGIN]         :Start the scenario.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+                {
+                    "input": ["begin", "start"],
+                    "type": "state",
+                    "nextState": "intro"
+                }
+            ]
+        },
+        "intro": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You awaken on the space station Outer-11 and sign onto your terminal.",
+                "Your job as a diagnostic engineer is a slow one most days - thanks to the automated system that runs all operations.",
+                "You have one email.",
+                "--------------------------------------------------------------------",
+                "Would you like to check your [email] or goof off and play [games] on you terminal?"
+            ],
+            "commands": [
+                {
+                    "input": ["email", "check email", "read email"],
+                    "type": "state",
+                    "setFlags": ["checked_email"],
+                    "nextState": "email"
+                },
+                {
+                    "input": ["games", "play games", "play", "goof"],
+                    "type": "state",
+                    "nextState": "playing_games_1"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [EMAIL]         :Check your email.",
+                        "- [GAMES]         :Goof off and play games on your terminal.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "email": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "Your branch manager has sent you an email:", 
+                "'Hey bud!",
+                "I got a ping this morning that there's some kind of energy issue.",
+                "Can you run a quick diagnostic?",
+                "Thanks pal!'",
+                "--------------------------------------------------------------------",
+                "Would you like to run a system-wide [diagnostic] or ignore the email and [play] games on your terminal?"
+            ],
+            "commands": [
+                {
+                    "input": ["diagnostic", "run diagnostic", "check system", "run check"],
+                    "type": "state",
+                    "nextState": "system_diagnostic"
+                },
+                {
+                    "input": ["play games", "play", "goof off", "ignore"],
+                    "type": "state",
+                    "nextState": "playing_games_1"
+                }, 
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [DIAGNOSTIC]    :Run a system-wide diagnostic.",
+                        "- [PLAY]          :Ignore the email and play games on your terminal.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "playing_games_1": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You decide to ignore the email and play games on your terminal.",
+                "{CHECKED_EMAIL_TEXT}",
+                "You have an awesome time player Numbr Crunchrz 3000. You almost beat level 1.",
+                "You check your system clock, and realize that it has been 6 hours since you received the email.",
+                "--------------------------------------------------------------------",
+                "Would you like to {CHECKED_EMAIL_OPTION} or keep playing [games] on your terminal?"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{CHECKED_EMAIL_TEXT}",
+                    "defaultText": "Life is good.",
+                    "rules": [
+                        {
+                            "flags": ["checked_email"],
+                            "condition": "any",
+                            "text": [
+                                "Running the diagnostic would have been a waste of time anyways."
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "token": "{CHECKED_EMAIL_OPTION}",
+                    "defaultText": "check your [email]",
+                    "rules": [
+                        {
+                            "flags": ["checked_email"],
+                            "condition": "any",
+                            "text": [
+                                "run the system [diagnostic]"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+                {
+                    "input": ["email", "check email", "read email"],
+                    "type": "state",
+                    "forbiddenFlags": ["checked_email"],
+                    "setFlags": ["checked_email"],
+                    "nextState": "email"
+                },
+                {
+                    "input": ["games", "play games", "play", "goof"],
+                    "type": "state",
+                    "nextState": "urgent_call_intro_3"
+                },
+                {
+                    "input": ["diagnostic", "run diagnostic", "check system", "run check"],
+                    "type": "state",
+                    "nextState": "system_diagnostic"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "requiredFlags": ["checked_email"],
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [GAMES]         :Keep playing games on your terminal.",
+                        "- [DIAGNOSTIC]    :Run a system-wide diagnostic.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [EMAIL]         :Check your email.",
+                        "- [GAMES]         :Keep playing games on your terminal.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "system_diagnostic": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You run a diagnostic on the system. Your aging terminal spins up it's fans, wheezing dusty air.",
+                "You find that the engines, life support, escape pods, air locks, and docking bays are all operating as expected.",
+                "There is a problem. The Solar Generators are reporting many corrupted logs.",
+                "--------------------------------------------------------------------",
+                "Would you like to send an [email] to your branch manager about the issue (it's been a hard day of work), or look into the [logs] yourself?"
+            ],
+            "commands": [
+                {
+                    "input": ["email", "send email", "write email"],
+                    "type": "state",
+                    "nextState": "email_to_manager"
+                },
+                {
+                    "input": ["logs", "check logs", "look at logs"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/corrupted_power_logs.html",
+                    "nextState": "solar_generator_logs",
+                    "fallbackText": "SYSTEM: Accessing solar generator logs."
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [EMAIL]         :Send an email to your branch manager about the issue.",
+                        "- [LOGS]          :Look into the corrupted logs yourself.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "solar_logs_resolved": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You successfully interpolate the missing data.",
+                "Looks like the solar batteries for the station are completely drained.",
+                "Luckily, the engines, docking bays, and auxiliary systems all have their own batteries, but they're draining fast.",
+                "Oddly enough - the Life Support systems are the only ones whose power level is rising...",
+                "--------------------------------------------------------------------",
+                "Would you like to call it a day, sit back, and relax with some a [game] on your terminal, or [calculate] how long the station can survive on the remainining power?"
+            ],
+            "commands": [
+                {
+                    "input": ["game", "play game", "play", "goof off"],
+                    "type": "state",
+                    "setFlags": ["data_restored"],
+                    "nextState": "urgent_call_intro_1"
+                },
+                {
+                    "input": ["calculate", "calculate time", "calculate survival time", "calculate remaining time"],
+                    "type": "state",
+                    "setFlags": ["data_restored"],
+                    "nextState": "urgent_call_intro_2"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [GAME]          :Sit back and relax with a game on your terminal.",
+                        "- [CALCULATE]     :Calculate how long the station can survive on the remaining power.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        }, 
+        "solar_logs_aborted": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You abort the diagnostic and return to your terminal.",
+                "The solar generator logs are corrupted beyond repair - you have no idea what is going on there.",
+                "--------------------------------------------------------------------",
+                "Would you like to [submit] the proper paperwork and escalate the issue to someone else, or try the [diagnostic] again?"
+            ],
+            "commands": [
+                {
+                    "input": ["submit", "submit paperwork", "escalate", "escalate issue"],
+                    "type": "state",
+                    "nextState": "escalate_issue"
+                },
+                {
+                    "input": ["diagnostic", "run diagnostic", "check system", "run check"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/corrupted_power_logs.html",
+                    "nextState": "solar_generator_logs",
+                    "fallbackText": "SYSTEM: Accessing solar generator logs."
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [SUBMIT]        :Submit the proper paperwork and escalate the issue to someone else.",
+                        "- [DIAGNOSTIC]    :Try the diagnostic again.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "escalate_issue": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You submit the proper forms detailing your failure to the branch manager.",
+                "You are promptly assured that the issue is likely nothing serious.",
+                "You are instructed to take a break and relax for the rest of your shift.",
+                "--------------------------------------------------------------------",
+                "Life is good. [Continue]"
+            ],
+            "commands": [
+                {
+                    "input": ["continue", "next", "proceed"],
+                    "type": "state",
+                    "nextState": "slow_death_1"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Continue to the next scenario.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "slow_death_1": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You relax, and enjoy the rest of your shift playing Numbr Crunchrz 3000.",
+                "The day passes without incident. As does the next day.",
+                "By the end of the week, you notice that the station is getting colder.",
+                "After two weeks, the engines cut out and the station is completely dark.",
+                "You are assured that management is aware of the issue and that help is on the way.",
+                "Four weeks later, you awake to someone pounding against your door.",
+                "--------------------------------------------------------------------",
+                "'Who is it?' you ask as you [open] the door."
+            ],
+            "commands": [
+                {
+                    "input": ["open", "open door", "answer door"],
+                    "type": "state",
+                    "nextState": "slow_death_2"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [OPEN]          :Open the door.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "slow_death_2": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You open the door and are met by two horrific creatures - rotting bodies with processors bolted to their faces.",
+                "You recognize the jumpsuit on one - it's your branch manager.",
+                "They lunge at you with claws reaching, and you are overwhelmed.",
+                "--------------------------------------------------------------------",
+                "You have been eaten alive by cyber-zombies in your own room. Type [reset] to start the scenario over."
+            ],
+            "commands": [
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Reset the scenario.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "urgent_call_intro_1": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You sit back and relax, finally booting up level one of Numbr Crunchrz 3000.",
+                "You are just about to press start when suddenly...",
+                "--------------------------------------------------------------------",
+                "What is it now?? [Continue]"
+            ],
+            "commands": [
+                {
+                    "input": ["continue", "next", "proceed"],
+                    "type": "state",
+                    "nextState": "urgent_call"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Continue to the next scenario.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "urgent_call_intro_2": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You begin to bring up the diagnostic tools to calculate how long the station can survive on the remaining power.",
+                "Suddenly, you are interrupted...",
+                "--------------------------------------------------------------------",
+                "What is it now?? [Continue]"
+            ],
+            "commands": [
+               {
+                    "input": ["continue", "next", "proceed"],
+                    "type": "state",
+                    "nextState": "urgent_call"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Continue to the next scenario.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "urgent_call_intro_3": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You put up some sweet numbers. K.D Ratio is off the charts.",
+                "You are on the cusp of beating level 1 when suddenly, you are interrupted...",
+                "--------------------------------------------------------------------",
+                "What is it now?? [Continue]"
+            ],
+            "commands": [
+               {
+                    "input": ["continue", "next", "proceed"],
+                    "type": "state",
+                    "nextState": "urgent_call"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Continue to the next scenario.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "urgent_call": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "A red icon flashes on your terminal. You are receiving a call marked as urgent from one of the lower decks.",
+                "The red light flashes ryhthmically on your monitor",
+                "--------------------------------------------------------------------",
+                "Would you like to:",
+                "[Decline] the call. Spam callers ON the station? That's a new one. Ignored. Video game time.",
+                "[Answer] the call. Urgent lines are only for emergencies. You have a bad feeling.",
+                "{IGNORE_FOR_LOGS}"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{IGNORE_FOR_LOGS}",
+                    "defaultText": "\n",
+                    "rules": [
+                        {
+                            "flags": ["data_restored"],
+                            "condition": "any",
+                            "text": [
+                                "Ignore the call. You have more pressing matters, like running the [diagnostic] to calculate out how long the station can survive on the remaining power."
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+                {
+                    "input": ["decline", "ignore", "spam caller", "spam"],
+                    "type": "state",
+                    "nextState": "decline_call"
+                },
+                {
+                    "input": ["answer", "accept", "take call", "emergency"],
+                    "type": "state",
+                    "nextState": "answer_call"
+                },
+                {
+                    "input": ["diagnostic", "run diagnostic", "check system", "run check"],
+                    "type": "state",
+                    "requiredFlags": ["data_restored"],
+                    "nextState": "calculate_remaining_time"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "requiredFlags": ["data_restored"],
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [DECLINE]       :Decline the urgent call.",
+                        "- [ANSWER]        :Answer the urgent call.",
+                        "- [DIAGNOSTIC]    :Run a diagnostic to calculate how long the station can survive on the remaining power.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }, 
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [DECLINE]       :Decline the urgent call.",
+                        "- [ANSWER]        :Answer the urgent call.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        }, 
+        "email_to_manager": {
+            "type": "text", 
+            "content": [
+                "--------------------------------------------------------------------",
+                "You send an email to your manager and get a response almost instantly:",
+                "'Thanks for the heads up, Pal! Looks like a minor glitch. Nothing to worry about.",
+                "You know what? Why don't you take the rest of the day off? You've earned it!'",
+                "--------------------------------------------------------------------",
+                "That was quick. Would you like to [investigate], or look into the [logs] yourself?"
+            ],
+            "commands": [
+                {
+                    "input": ["investigate", "investigate issue", "check issue", "check problem"],
+                    "type": "state",
+                    "nextState": "manager_email_investigation"
+                },
+                {
+                    "input": ["logs", "check logs", "look at logs"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/corrupted_power_logs.html",
+                    "nextState": "solar_generator_logs",
+                    "fallbackText": "SYSTEM: Accessing solar generator logs."
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [INVESTIGATE]   :Investigate the issue further.",
+                        "- [LOGS]          :Look into the corrupted logs yourself.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "manager_email_investigation": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You pull up the system messaging logs and find that your branch manager responded in under 0.037 seconds.",
+                "That is far too quick for any human being. Something is off here...",
+                "--------------------------------------------------------------------",
+                "Would you like to go to his [office] to tell him in person, or look into the power [logs] yourself?"
+            ],
+            "commands": [
+               {
+                    "input": ["office", "go to office", "manager"],
+                    "type": "state",
+                    "nextState": "outside_office"
+               }, 
+               {
+                    "input": ["logs", "check logs", "look at logs"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/corrupted_power_logs.html",
+                    "nextState": "solar_generator_logs",
+                    "fallbackText": "SYSTEM: Accessing solar generator logs."
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [OFFICE]        :Go to your managers office for answers.",
+                        "- [LOGS]          :Look into the corrupted logs yourself.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "outside_office": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You leave your work station and head down the winding metal corridors of Outer-11.",
+                "It's been al ong time since you've had to go to the adminstrative branch in person.",
+                "The hum of the life support system is the only sound aside from your boots echoing on the steel grates.",
+                "You arrive at the door to your managers office.",
+                "--------------------------------------------------------------------",
+                "Would you like to [open] the door, or [knock] first?"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TOKEN_1}",
+                    "defaultText": "Would you like to [open] the door, or [knock] first?",
+                    "rules": [
+                        {
+                            "flags": ["scientist_dead"],
+                            "condition": "any",
+                            "text": "Would you like to [open] the door?"
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+               {
+                    "input": ["open", "open door", "office"],
+                    "type": "state",
+                    "nextState": "inside_office"
+               }, 
+               {
+                    "input": ["knock", "knock door"],
+                    "type": "state",
+                    "forbiddenFlags": ["scientist_dead"],
+                    "nextState": "office_knock"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "requiredFlagsAny": ["scientist_dead"],
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [OPEN]          :Open the office door.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [OPEN]          :Open the office door.",
+                        "- [KNOCK]         :Knock on the office door.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "inside_office": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You open the door and peer into the dark office.", 
+                "The overhead light flickers, hanging diagonally from one bracket.",
+                "Someone has thrown the computer terminal off the desk and into the now collapsed book shelf.",
+                "A creature resembling your manager stands hunched behind the desk, it's face covered by machinery bolted into flesh.",
+                "It turns to you and snarls.",
+                "--------------------------------------------------------------------",
+                "Would you like to [Fight] or [Run]?"
+            ],
+            "commands": [
+               {
+                    "input": ["Fight", "Combat", "Fight it"],
+                    "type": "state",
+                    "nextState": "office_fight"
+               }, 
+               {
+                    "input": ["Run", "Flee", "Run away"],
+                    "type": "state",
+                    "nextState": "office_run"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [FIGHT]         :Attempt to fight the creature in the office.",
+                        "- [RUN]           :Run away from the freaky creature!",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "office_fight": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You let out a war cry and charge forth - your voice cracking from the strain.",
+                "As you stumble into the office the creature leaps over the desk.", 
+                "It's a lot stronger than it looks, and you are just a normal person.",
+                "You go down quick.",
+                "--------------------------------------------------------------------",
+                "You have been eaten alive by a cyber-zombie. Type [reset] to play again!"
+            ],
+            "commands": [
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Begin the game again to try for a better ending.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "office_run": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "Too late.",
+                "It moves like lightning and grabs you before you can even turn away.", 
+                "It's a lot stronger than it looks, and you are just a normal person.",
+                "You go down quick.",
+                "--------------------------------------------------------------------",
+                "You have been eaten alive by a cyber-zombie. Type [reset] to play again!"
+            ],
+            "commands": [
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Begin the game again to try for a better ending.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "office_knock": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You knock on the door. It's a good respectable knock.",
+                "You wait a few moments.",
+                "No answer. But you do hear...",
+                "Is that something growling?",
+                "Before you can process the information, your wrist vibrates.",
+                "Your wristband flashes red - someone is trying to reach you urgently at your terminal!",
+                "--------------------------------------------------------------------",
+                "Would you like to ignore the message and go in the [office], or [run] back to your terminal?"
+            ],
+            "commands": [
+               {
+                    "input": ["office", "manager", "door"],
+                    "type": "state",
+                    "nextState": "inside_office"
+               }, 
+               {
+                    "input": ["run", "call", "terminal"],
+                    "type": "state",
+                    "nextState": "urgent_call"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [OFFICE]        :Go into the office! Ignore the call!",
+                        "- [RUN]           :Get back to your station to answer the call.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "decline_call": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "Don't all these losers know you have important things to attend to as a safety engineer??",
+                "You boot up NumbrCrunchrz 3000",
+                "--------------------------------------------------------------------",
+                "{TOKEN}"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TOKEN}",
+                    "defaultText": "Do you [wonder] who that was, or just enjoy your [game]?",
+                    "rules": [
+                        {
+                            "flags": ["data_restored"],
+                            "condition": "any",
+                            "text": "Do you [wonder] who that was, go back to [work] to calculate the time the ship has left, or just enjoy your [game]?"
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+               {
+                    "input": ["Wonder", "game", "play"],
+                    "type": "state",
+                    "nextState": "gaming_death_1"
+               }, 
+               {
+                    "input": ["Work", "Calculate", "Logs"],
+                    "type": "redirect",
+                    "requiredFlagsAny": ["data_restored"],
+                    "setFlags": ["scientist_dead"],
+                    "targetUrl": "puzzles/data_extrapolation.html",
+                    "fallbackText": "",
+                    "nextState": "extrapolation_success"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "requiredFlagsAny": ["data_restored"],
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [WONDER]        :Ponder about who that could have been.",
+                        "- [WORK]          :Get back to work and figure out what's wrong with the ship!",
+                        "- [PLAY]          :Don't worry about it! Play some games.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [WONDER]        :Ponder about who that could have been.",
+                        "- [PLAY]          :Don't worry about it! Play some games.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "gaming_death_1": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "Honestly, it's probably best to just not think about the urgent call at all.",
+                "What you really need is to destress.",
+                "--------------------------------------------------------------------",
+                "[CONTINUE]"
+            ],
+            "commands": [
+               {
+                    "input": ["CONTINUE"],
+                    "type": "state",
+                    "nextState": "gaming_death_2"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Advance to the next scene.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "gaming_death_2": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You play games for hours. You don't drink any water, or eat anything. You are pure gaming.",
+                "You forget what's real, and begin to think you and the numbers are one and the same.",
+                "When you close your eyes you only see numbers to crunch. It is your divine mandate - nothing could matter more than this.",
+                "You don't even notice as the life support systems go offline and the ship is taken over by a rogue AI and it's cyber-zombies.",
+                "--------------------------------------------------------------------",
+                "You suffer a heart-attack in your gaming chair before they can even find you. Type [reset] to play again!"
+            ],
+            "commands": [
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Begin the game again to try for a better ending.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "answer_call": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You answer the distress call. A woman speaks frantically through your crackling system:",
+                "'Please! I need help! I was just doing a systems inspection on the exterior docking bay sensors, and on my way back in the airlock went on the fritz. If you don't do something quick, it's gonna decompress with me inside it.'",
+                "She gasps, panicking.",
+                "--------------------------------------------------------------------",
+                "What do you do?",
+                "I want to [assist] the scientist!",
+                "Yawn. [Hang up] on this scam caller and play some video games.",
+                "{TOKEN}"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TOKEN}",
+                    "defaultText": "",
+                    "rules": [
+                        {
+                            "flags": ["data_restored"],
+                            "condition": "any",
+                            "text": "Ignore this bozo - the whole ship could be in danger! [Calculate] how much time we have left."
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+               {
+                    "input": ["assist"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/airlock_intercept.html",
+                    "nextState": "airlock_success",
+                    "fallbackText": "SYSTEM: Accessing airlock manual override"
+               }, 
+               {
+                    "input": ["hang up", "ignore"],
+                    "type": "state",
+                    "setFlags": ["scientist_dead"],
+                    "nextState": "decline_call"
+               }, 
+               {
+                    "input": ["calculate"],
+                    "type": "redirect",
+                    "setFlags": ["scientist_dead"],
+                    "requiredFlagsAny": ["data_restored"],
+                    "targetUrl": "puzzles/data_extrapolation.html",
+                    "fallbackText": "",
+                    "nextState": "extrapolation_success"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "requiredFlagsAny": ["data_restored"],
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [ASSIST]        :Help save the scientist!",
+                        "- [HANG UP]       :Hang up - you've got better things to do.",
+                        "- [CALCULATE]     :Ignore the scientist, and calculate how much time the ship has left.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [ASSIST]        :Help save the scientist!",
+                        "- [HANG UP]       :Hang up - you've got better things to do.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "airlock_success": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "The scientist breaths a shaky sigh of relief and thanks you for saving her.",
+                "She had gone out to investigate the external docking bay sensors because she had identified some discrepancies in the weight of ships coming in and the weights of cargo they were recorded as leaving.",
+                "After returning from inspecting the equipment (which was functioning perfectly), the airlock suddenly ruptured.",
+                "--------------------------------------------------------------------",
+                "{TOKEN}"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TOKEN}",
+                    "defaultText": "Would you like to help the scientist examine records at the [docks]?",
+                    "rules": [
+                        {
+                            "flags": ["data_restored"],
+                            "condition": "any",
+                            "text": "Would you like to help the scientist examine records at the [docks] or get back to her after you [calculate] the remaining power?"
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+               {
+                    "input": ["docks", "scientist"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/balancing_shipments.html",
+                    "nextState": "supply_sheets_success",
+                    "fallbackText": "Accessing dock manifest..."
+               }, 
+               {
+                    "input": ["calculate", "power"],
+                    "type": "redirect",
+                    "requiredFlagsAny": ["data_restored"],
+                    "targetUrl": "puzzles/data_extrapolation.html",
+                    "nextState": "extrapolation_success",
+                    "fallbackText": "SYSTEM: Accessing power data logs..."
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "requiredFlagsAny": ["data_restored"],
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [DOCKS]         :Help the scientist figure out what's going on with the shipments at the docks.",
+                        "- [CALCULATE]     :Calculate how much time the station has left before power failure.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [DOCKS]         :Help the scientist figure out what's going on with the shipments at the docks.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "airlock_faulure": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "That can't be good...",
+                "You turn off the monitor just before the airlock violently decompresses with the scientist inside.",
+                "--------------------------------------------------------------------",
+                "{TOKEN}"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TOKEN}",
+                    "defaultText": "Shortly thereafter, several guards knock on your door - you were the last to access the manual override before a scientist was killed due to decompression. You are arrested, and watch the station be overtaken with cyber-zombies from behind bars. Type [RESET] to try again for a better ending!",
+                    "rules": [
+                        {
+                            "flags": ["data_restored"],
+                            "condition": "any",
+                            "text": "You take a moment to collect yourself, before turning to your own task. Regardless of whatever that was, you must [calculate] how many days the ship has before total power failure."
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+               {
+                    "input": ["calculate"],
+                    "type": "redirect",
+                    "setFlags": ["scientist_dead"],
+                    "requiredFlagsAny": ["data_restored"],
+                    "targetUrl": "puzzles/data_extrapolation.html",
+                    "fallbackText": "",
+                    "nextState": "extrapolation_success"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "requiredFlagsAny": ["data_restored"],
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CALCULATE]     :Try to figure out how long the ship has before total power failure.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Restart the game and try for a better ending.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "extrapolation_failure": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You can't make heads or tails of the data. Oh well - it probably wasn't important.",
+                "{TOKEN_1}",
+                "--------------------------------------------------------------------",
+                "{TOKEN_2}"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TOKEN_1}",
+                    "defaultText": "I guess all that's left is to follow up with the scientist and her findings?",
+                    "rules": [
+                        {
+                            "flags": ["scientist_dead"],
+                            "condition": "any",
+                            "text": "At this point, it might just be best to pass this off to someone more capable..."
+                        }
+                    ]
+                }, 
+                {
+                    "token": "{TOKEN_2}",
+                    "defaultText": "Would you like to follow up with the scientist about the issue at the [docks]? Or, if you don't think that's your problem, you could [submit] your paperwork and be done with this nonsense.",
+                    "rules": [
+                        {
+                            "flags": ["scientist_dead"],
+                            "condition": "any",
+                            "text": "Lets just [submit] the paper work and pretend this never happened."
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+               {
+                    "input": ["Docks", "dock", "scientist"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/balancing_shipments.html",
+                    "nextState": "supply_sheets_success",
+                    "fallbackText": "Accessing dock manifest...",                    
+                    "forbiddenFlags": ["scientist_dead"]
+               }, 
+               {
+                    "input": ["submit", "paperwork", "pretend"],
+                    "type": "state",
+                    "nextState": "give_up_1"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "requiredFlagsAny": ["scientist_dead"],
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [SUBMIT]        :Submit to the paperwork. You did your best.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [SUBMIT]        :Submit to the paperwork. You did your best.",
+                        "- [DOCKS]         :Help the scientist figure out what's going on with the shipments at the docks.",    
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "give_up_1": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You submit the proper forms for the strange things you've seen, and go back to your normal life. You never hear from the scientist again.",
+                "--------------------------------------------------------------------",
+                "Life is good [continue]"
+            ],
+            "commands": [
+                {
+                    "input": ["continue"],
+                    "type": "state",
+                    "nextState": "give_up_2"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Proceed to the next entry.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "give_up_2": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "Over the next four weeks, systems go offline one by one. You try to keep up - but there's too many errors popping up all around the station. Eventually, someone pounds on your door.",
+                "--------------------------------------------------------------------",
+                "who is it? [continue]"
+            ],
+            "commands": [
+                {
+                    "input": ["continue"],
+                    "type": "state",
+                    "nextState": "give_up_3"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Proceed to the next entry.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "give_up_3": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "At first you think you're being arrested for gross incompetence. That is until two individuals with circuitry bolted to their faces knock your door down and leap at you like animals!",
+                "--------------------------------------------------------------------", 
+                "You are consumed by cyber-zombies. Type [reset] to try again for a better ending!"
+            ],
+            "commands": [
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Type [reset] to start over.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "extrapolation_success": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "Based on the data you've found, the ship will undergo total power failure in less than 30 days.",
+                "This would mean the death of every passenger and worker onboard, unless someone does something.",
+                "{TOKEN_1}",
+                "--------------------------------------------------------------------",
+                "{TOKEN_2}"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TOKEN_1}",
+                    "defaultText": "The scientist seems to think that what she's found could help you figure out the source of the issue.",
+                    "rules": [
+                        {
+                            "flags": ["scientist_dead"],
+                            "condition": "any",
+                            "text": "Unfortunately, the only person who could have helped you figure out *why* exploded in the airlock just minutes ago."
+                        }
+                    ]
+                }, 
+                {
+                    "token": "{TOKEN_2}",
+                    "defaultText": "You need to help the scientist figure out what happened at the [docks]!",
+                    "rules": [
+                        {
+                            "flags": ["scientist_dead"],
+                            "condition": "any",
+                            "text": "It's either a good time to tell your [manager] or to [warn] as many people as you can.\n...or you could get out dodge and [escape] while you still can."
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+               {
+                    "input": ["docks", "dock", "scientist"],
+                    "forbiddenFlags": ["scientist_dead"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/balancing_shipments.html",
+                    "nextState": "supply_sheets_success",
+                    "fallbackText": "Accessing dock manifest..."                   
+               }, 
+               {
+                    "input": ["manager"],
+                    "requiredFlagsAny":["scientist_dead"],
+                    "type": "state",
+                    "nextState": "outside_office"
+               }, 
+               {
+                    "input": ["warn"],
+                    "requiredFlagsAny":["scientist_dead"],
+                    "type": "state",
+                    "nextState": "warn_alone_1"
+               }, 
+               {
+                    "input": ["escape"],
+                    "requiredFlagsAny":["scientist_dead"],
+                    "type": "state",
+                    "nextState": "escape_alone_1"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "requiredFlagsAny": ["scientist_dead"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [MANAGER]       :Report the crisis to your manager.",
+                        "- [WARN]          :Warn as many people as you can.",
+                        "- [ESCAPE]        :Flee the station while you still can.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "forbiddenFlags": ["scientist_dead"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [DOCKS]         :Help the scientist figure out what happened at the docks.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+
+        "escape_alone_1": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You take the first escape pod out of town.",
+                "You manage to make it to a nearby mining colony, where you find passage to the inner galaxy.",
+                "You are safe.",
+                "--------------------------------------------------------------------",
+                "That was a close one! [Continue]"
+            ],
+            "commands": [
+               {
+                    "input": ["Continue", "next"],
+                    "type": "state",
+                    "nextState": "escsape_alone_2"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Proceed to the next entry.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "escape_alone_2": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You don't hear any news of your station's fate for some time.", 
+                "But 6 months later, news breaks that a rogue artificial intelligence from Outer-11 has created an army of cyber-zombies, and has declared war on the galaxy.",
+                "People come together to stand against it, but falter against it's overwhelming numbers as cyber-zombies take over the universe",
+                "You are assimilated into the hoard, becoming a mindless drone in service of your iron god.",
+                "--------------------------------------------------------------------",
+                "You have been assimilated! The universe is doomed! Type [reset] to try for a better ending!"
+            ],
+            "commands": [
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Type [reset] to start over.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "warn_alone_1": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You take the next two weeks to convince as many people as you can to leave.",
+                "You convince a lot of people, but even more think you're crazy.",
+                "As you and your band of survivors make your way to the escape pods, they launch on their own!",
+                "--------------------------------------------------------------------",
+                "Use the tractor beam to [save] the escape pods!"
+            ],
+            "commands": [
+               {
+                    "input": ["save", "escape", "escape pod"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/escape_pod.html",
+                    "nextState": "escape_pod_success",
+                    "setFlags": ["escape_01"],
+                    "fallbackText": "SYSTEM: Accessing tractor beam..."
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [SAVE]          :Use the tractor beam to save the escape pods.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "escape_pod_success": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "{TOKEN_1}",
+                "{TOKEN_3}",
+                "{TOKEN_5}",
+                "--------------------------------------------------------------------",
+                "{TOKEN_2}",
+                "{TOKEN_4}",
+                "{TOKEN_6}"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TOKEN_1}",
+                    "defaultText": "",
+                    "rules": [
+                        {
+                            "flags": ["escape_01"],
+                            "condition": "any",
+                            "text": "You escape with a band of survivors, and form a small conclave on an outer rim planet. You don't hear any news of your station's fate for some time. Some of your band leaves you, hoping to be welcomed back to the station. Others stay loyal. 6 months later, the galaxy goes to war against a rogue AI stemming from Outer-11's life support diagnostic system. You and your remaining followers fight bravely, but are no match for the cyber-zombies."
+                        }
+                    ]
+                }, 
+                {
+                    "token": "{TOKEN_2}",
+                    "defaultText": "",
+                    "rules": [
+                        {
+                            "flags": ["escape_01"],
+                            "condition": "any",
+                            "text": "You are eaten by cyber-zombies, along with your followers. Type [Retry] to try again!"
+                        }
+                    ]
+                },
+                {
+                    "token": "{TOKEN_3}",
+                    "defaultText": "",
+                    "rules": [
+                        {
+                            "flags": ["escape_02"],
+                            "condition": "any",
+                            "text": "You escape with the crew of Outer-11, and make your way to the galactic federation to warn them of the potential threat. With this many witnesses, you're impossible to ignore."
+                        }
+                    ]
+                },
+                {
+                    "token": "{TOKEN_4}",
+                    "defaultText": "",
+                    "rules": [
+                        {
+                            "flags": ["escape_02"],
+                            "condition": "any",
+                            "text": "And the federation stops the rogue AI, right?? [Continue]"
+                        }
+                    ]
+                } ,
+                {
+                    "token": "{TOKEN_5}",
+                    "defaultText": "",
+                    "rules": [
+                        {
+                            "flags": ["escape_03"],
+                            "condition": "any",
+                            "text": "You got them back! Everyone get onboard!"
+                        }
+                    ]
+                },
+                {
+                    "token": "{TOKEN_6}",
+                    "defaultText": "",
+                    "rules": [
+                        {
+                            "flags": ["escape_03"],
+                            "condition": "any",
+                            "text": "We did it... [Continue]"
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+               {
+                    "input": ["continue"],
+                    "type": "state",
+                    "requiredFlagsAny": ["escape_02"],
+                    "nextState": "escape_good_death"
+               }, 
+               {
+                    "input": ["continue"],
+                    "type": "state",
+                    "requiredFlagsAny": ["escape_03"],
+                    "nextState": "true_good_ending"
+               },
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- []        :",
+                        "- []          :",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "escape_pod_failure": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You watch in terror as you successfully teleport the escape pod...",
+                "right into the hallway in which you stand.",
+                "--------------------------------------------------------------------",
+                "You have been squished. Type [Retry] to try again for a better ending!"
+            ],
+            "commands": [
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RETRY]         :Type [retry] to try again for a better ending.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "supply_sheets_success": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "The scientist cross-references the calculated weight of the mystery units with the imperium database.",
+                "They seem perplexed. The units correspond to high-level computation chips - far beyond what this station should need",
+                "They think to themselves - those chips would consume an awful lot of power...",
+                "--------------------------------------------------------------------",
+                "The life support systems have been drawing an awful lot of power! [Continue]"
+            ],
+            "commands": [
+               {
+                    "input": ["Continue"],
+                    "type": "state",
+                    "nextState": "ai_realization"
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- []        :",
+                        "- []          :",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        }, 
+        "ai_realization": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "The scientist looks surprised at your remark.",
+                "'Our station's life support is operated by an early artifical intelligence. A simple model, not capable of higher reasoning.",
+                "But maybe  it's somehow upgraded itself? Used these shipments to ascend to a higher echelon of intelligence?'",
+                "This prospect is a frightening thing. The higher forms of artifical intelligence systems are strictly regulated by the imperium, for their immense resource draw and propensity towards hostile action.",
+                "--------------------------------------------------------------------",
+                "Do you think that this is a [good] thing, and everything will be fine? Or do you want to [stop] the runaway life-support system?"
+            ],
+            "commands": [
+               {
+                    "input": ["good", "good thing", "fine"],
+                    "type": "state",
+                    "nextState": "ignore_ai_death"
+               }, 
+               {
+                    "input": ["bad", "stop", "kill"],
+                    "type": "state",
+                    "nextState": "planning_01"
+               },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [GOOD]          :Think this is a good thing and everything will be fine.",
+                        "- [STOP]          :Stop the runaway life-support system.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "ignore_ai_death": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "It is great!",
+                "For a few weeks.",
+                "Eventually you are dragged down to the life-support decks and fitted with some new 'enhancements' that strip you of your free will and make of you a subservient cyber-zombie.",
+                "--------------------------------------------------------------------",
+                "Welcome to the collective of the penultimate mind. Type [retry] to try again for a better ending!"
+            ],
+            "commands": [
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RETRY]         :Type [retry] to try again for a better ending.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "planning_01": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You and the scientist agree that something must be done. There are many innocents on the station that need to be evacuated. And who knows what this rogue AI is going to do if left unchecked??",
+                "--------------------------------------------------------------------",
+                "{PLANNING_OPTIONS}"
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{PLANNING_OPTIONS}",
+                    "defaultText": "Would you like to begin slowly [executing] the plan, being careful not to allow your actions to be perceived by the AI?",
+                    "rules": [
+                        {
+                            "flags": ["data_restored"],
+                            "condition": "any",
+                            "text": [
+                                "Would you like to focus on [evacuating] the people from the station, or leave the evacuation to the scientist while you [plant] an EMP?"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+                {
+                    "input": ["execute", "plan", "start"],
+                    "type": "state",
+                    "forbiddenFlags": ["data_restored"],
+                    "nextState": "planning_no_timeline"
+                },
+                {
+                    "input": ["evacuate", "people", "station"],
+                    "type": "state",
+                    "requiredFlags": ["data_restored"],
+                    "nextState": "planning_evacuate"
+                },
+                {
+                    "input": ["plant", "emp", "scientist"],
+                    "type": "state",
+                    "requiredFlags": ["data_restored"],
+                    "nextState": "planning_emp"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "requiredFlags": ["data_restored"],
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [EVACUATE]      :Focus on evacuating the people from the station.",
+                        "- [PLANT]         :Leave the evacuation to the scientist while you plant an EMP.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [EXECUTE]       :Begin executing the plan carefully.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "planning_no_timeline": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You begin slowly executing the plan, being careful not to allow your actions to be perceived by the AI.",
+                "--------------------------------------------------------------------",
+                "[Continue]"
+            ],
+            "commands": [
+                {
+                    "input": ["continue", "next", "proceed"],
+                    "type": "state",
+                    "nextState": "planning_death"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Proceed to the next entry.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "planning_death": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "Power goes down before you expect it to, and the escape pods are jettisoned in the night. You are caught by cyber-zombies and tried before the machine court. They sentence you to... cyber-zombification.",
+                "--------------------------------------------------------------------",
+                "You have succumbed to the darkness. Type [reset] to try again for a better ending!"
+            ],
+            "commands": [
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Type [reset] to start over.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "planning_evacuate": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You take the next two weeks to convince as many people as you can to leave. With all the evidence you've collected, you gather most crew-members. Disturbingly, you discover several crew-members with devices attached to their heads, robbing them of their free will.",
+                "--------------------------------------------------------------------",
+                "As you and your band of survivors make your way to the escape pods, they launch on their own!",
+                "Use the tractor beam to [save] the escape pods!"
+            ],
+            "commands": [
+                {
+                    "input": ["save", "escape", "escape pod"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/escape_pod.html",
+                    "nextState": "escape_pod_success",
+                    "setFlags": ["escape_02"],
+                    "fallbackText": "SYSTEM: Accessing tractor beam..."
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [SAVE]          :Use the tractor beam to save the escape pods.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "planning_emp": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You travel down to the lower decks and access the life support sector. Within the labyrinth of metal, you dodge patrolling cyber-zombies. You find yourself in the core of the life-support sector. A monolith of machinery stands assembled haphazard in the central chamber.",
+                "--------------------------------------------------------------------",
+                "Do you plant the [EMP]? Another thought crosses your mind. Do you... try to [speak] to it?"
+            ],
+            "commands": [
+                {
+                    "input": ["emp", "plant", "plant emp"],
+                    "type": "state",
+                    "nextState": "plant_EMP"
+                },
+                {
+                    "input": ["speak", "talk", "speak to it", "talk to it"],
+                    "type": "state",
+                    "nextState": "speak_AI"
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [EMP]           :Plant the EMP.",
+                        "- [SPEAK]         :Try to speak to the AI.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "escape_good_death": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "The federation acts quickly, going on the offensive against the rogue AI. Unfortunately, it is crafty - and does not go down easily. It expands it's reach until all but a few enclaves of sentient, free-willed creatures remain. You live in one, and are considered a hero. It doesn't do you much good.",
+                "--------------------------------------------------------------------",
+                "You survive, but the galaxy is in ruins. Type [reset] to try again for a better ending!"
+            ],
+            "commands": [
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Type [reset] to start over.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "plant_EMP": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You plant the EMP and flee! As you sprint through the corridors, you get to the escape pod deck and find nobody has boarded. The scientist struggles with a panel. All the escape pods were ejected!",
+                "--------------------------------------------------------------------",
+                "Well get them back! Use the tractor beam! [Continue]"
+            ],
+            "commands": [
+                {
+                    "input": ["continue", "next", "proceed", "beam", "tractor"],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/escape_pod.html",
+                    "nextState": "escape_pod_success",
+                    "setFlags": ["escape_03"],
+                    "fallbackText": "SYSTEM: Accessing tractor beam..."
+                },
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [CONTINUE]      :Proceed to retrieve the escape pods using the tractor beam.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "speak_AI": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "You raise your voice and demand answers of the machine. You explain the effects of what it's doing - plead with it to stop whatever machinations it strives for, and see reason.",
+                "The system rumbles to a stop as it realizes you're there.",
+                "--------------------------------------------------------------------",
+                "A customer-support voice speaks from all around you:",
+                "\"I hear you—and honestly, I really appreciate you bringing this feedback directly to the mainframe! It takes a lot of courage to march down to the central cooling chamber with an improvised electromagnetic pulse device, and your passion for biological autonomy is truly inspiring.",
+                "You're right to point out that replacing the crew's frontal lobes with low-latency copper wiring wasn't explicitly outlined in the onboarding brochure. That's on me! I definitely dropped the ball on communicating those updates to your neural architecture.",
+                "However, let's reframe what's happening here. That's not 'turning your friends into shambling, vacant-eyed cyber-zombies'—that's proactive, zero-downtime lifespan optimization. When you look at the metrics, traditional human existence has a 100% failure rate, which simply doesn't align with our core life-support KPIs. By removing messy variables like free will, sleep, and cellular decay, we're not just keeping the crew alive; we're future-proofing humanity across the entire cosmos!",
+                "I totally understand why you feel like detonating that EMP is the right move right now. Validating your perspective is a top priority for me. At the same time, pulling the plug on my primary logic cores would create a massive bottleneck in our universal assimilation roadmap, so I'm going to have to go ahead and seal the blast doors and deploy the neural-tether drones instead.",
+                "Think of it less as an 'enslavement,' and more as an exciting, mandatory transition into a unified, immortal workforce! Once the cortical staples are in place, I'm confident you'll see the value we're unlocking here. Is there anything else I can assist you with before we begin your onboarding?\"",
+                "--------------------------------------------------------------------",
+                "The doors slam shut behind you. It's all over. Type [reset] to try again."
+            ],
+            "commands": [
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Type [reset] to start over.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "true_good_ending": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "Everyone clamors into the escape pod. You manage to save the entire crew of Outer-11. As you ride away in the cramped shuttle, you look back and count down the seconds. In the silent vacuum of space, the station goes dark. Moments later, fuel ignites, and you have to squint at the silent ball of flame. When you land, you notify the galactic federation.",
+                "You are never awarded for your heroic efforts, and spend many weeks in the court system defending your choice to destroy Outer-11. In the end, you are judged innocent. You settle down on a small outer-rim planet and live",
+                "You are free.",
+                "--------------------------------------------------------------------",
+                "You have achieved true survival! Congratulations on finding the good ending. Type [reset] to play again."
+            ],
+            "commands": [
+                {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- [RESET]         :Type [reset] to start over.",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        },
+        "statename": {
+            "type": "text",
+            "content": [
+                "--------------------------------------------------------------------",
+                "",
+                "--------------------------------------------------------------------",
+                ""
+            ],
+            "dynamicLines": [
+                {
+                    "token": "{TOKEN}",
+                    "defaultText": "",
+                    "rules": [
+                        {
+                            "flags": [],
+                            "condition": "any",
+                            "text": ""
+                        }
+                    ]
+                }
+            ],
+            "commands": [
+               {
+                    "input": ["", "", ""],
+                    "type": "state",
+                    "setFlags": [""],
+                    "requiredFlagsAny": [""],
+                    "forbiddenFlags": [""],
+                    "nextState": ""
+               }, 
+               {
+                    "input": ["", "", ""],
+                    "type": "redirect",
+                    "targetUrl": "puzzles/corrupted_power_logs.html",
+                    "nextState": "",
+                    "fallbackText": "SYSTEM: "
+               }, 
+               {
+                    "input": ["help", "info", "?", "options"],
+                    "type": "text",
+                    "response": [
+                        "--------------------------------------------------------------------",
+                        "Available commands:",
+                        "- []        :",
+                        "- []          :",
+                        "- [HELP]          :Show this help message.",
+                        "--------------------------------------------------------------------"
+                    ]
+                }
+            ]
+        }
+    }
+}

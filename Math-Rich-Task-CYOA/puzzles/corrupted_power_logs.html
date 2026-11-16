@@ -167,27 +167,27 @@
 
       if (emptyFound) {
         if (attempts > 2) {
-          feedback.textContent = '[ERROR]: Incomplete telemetry data. Ensure you fill all of the missing entries to complete the data log. \n[SYSTEM]: Automated hint: System levels follow a linear pattern. Check the differences between consecutive days to identify the correct values.';
+          feedback.textContent = '[ERROR]: You have note entered a value for one or more fields. \n[HINT]: Check the differences between consecutive days to identify the correct values.';
         } else {
-          feedback.textContent = '[ERROR]: Incomplete telemetry data. Ensure you fill all of the missing entries to complete the data log.';
+          feedback.textContent = '[ERROR]:You have not entered a value for one or more fields.';
         }
       } else if (!allCorrect) {
         if (attempts > 2) {
-          feedback.textContent = '[ERROR]: Sequence mismatch detected. Entries in error have been highlighted. Check interpolated data against surrounding data points. \n[SYSTEM]: Automated hint: System levels follow a linear pattern. Check the differences between consecutive days to identify the correct values.';
+          feedback.textContent = '[ERROR]: One or more fields have been entered incorrectly. Entries with errors have been highlighted. \n[HINT]: Check the differences between consecutive days to identify the correct values.';
         } else {
-          feedback.textContent = '[ERROR]: Sequence mismatch detected. Entries in error have been highlighted. Check interpolated data against surrounding data points.';
+          feedback.textContent = '[ERROR]: One or more fields have been entered incorrectly. Entries with errors have been highlighted.';
         }
       } else {
         feedback.style.color = '#00ff66';
-        feedback.textContent = '[SUCCESS]: Pattern synchronized. Recalibrating relay...';
+        feedback.textContent = '[SUCCESS]: Data log has been successfully reconstructed. Exiting diagnostic mode...';
         setTimeout(() => {
-          window.completePuzzleModule('solar_resolved');
+          window.completePuzzleModule('solar_logs_resolved');
         }, 1200);
       }
     });
 
     abortBtn.addEventListener('click', () => {
-      window.completePuzzleModule('diagnostic');
+      window.completePuzzleModule('solar_logs_aborted');
     });
   })();
 </script>

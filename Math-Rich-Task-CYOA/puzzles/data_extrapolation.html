@@ -5,7 +5,7 @@
   </h3>
 
   <p id="system-brief" style="margin-bottom: 15px;">
-    Derive the linear equation <strong>y = mx + b</strong> for the active system, where <strong>x</strong> is days elapsed (D1 = 0) and <strong>y</strong> is power output/draw.
+    Derive the linear equation <strong>y = mx + b</strong> for the active system, where <strong>x</strong> is days elapsed (D0 = 0) and <strong>y</strong> is power output/draw.
   </p>
 
   <style>
@@ -216,7 +216,7 @@
       // Build telemetry row
       let html = `<div class="strip-header" style="text-align: left;">DAY (x)</div>`;
       for (let x = 0; x < 10; x++) {
-        html += `<div class="strip-header">D${x + 1} (${x})</div>`;
+        html += `<div class="strip-header">${x}</div>`;
       }
       html += `<div class="strip-cell" style="text-align: left; font-weight: bold;">TARGET (y)</div>`;
       sys.data.forEach((val, idx) => {
@@ -232,7 +232,7 @@
         chartInstance.destroy();
       }
 
-      const labels = ['x=0 (D1)', 'x=1 (D2)', 'x=2 (D3)', 'x=3 (D4)', 'x=4 (D5)', 'x=5 (D6)', 'x=6 (D7)', 'x=7 (D8)', 'x=8 (D9)', 'x=9 (D10)'];
+      const labels = ['x=0', 'x=1', 'x=2', 'x=3', 'x=4', 'x=5', 'x=6', 'x=7', 'x=8', 'x=9'];
 
       chartInstance = new Chart(canvas, {
         type: 'line',
@@ -240,7 +240,7 @@
           labels: labels,
           datasets: [
             {
-              label: 'Recorded Telemetry',
+              label: 'Recorded Data Values',
               data: sys.data,
               borderColor: 'rgba(0, 255, 102, 0.35)',
               backgroundColor: 'rgba(0, 255, 102, 0.1)',
@@ -343,14 +343,14 @@
             } else {
               feedback.textContent = '[ALL SYSTEMS VERIFIED]: Power bus equations locked. Returning to terminal...';
               setTimeout(() => {
-                window.completePuzzleModule('solar_resolved');
+                window.completePuzzleModule('extrapolation_success');
               }, 1500);
             }
           } else {
             feedback.style.color = '#ff3333';
             let msg = '[MISMATCH]: Model diverges from recorded telemetry. Adjust m (slope) or b (starting value at x=0) and retry.';
             if (attempts > 2) {
-              msg += '\n[HINT]: b is the value at x=0 (D1). m is how much y changes each day.';
+              msg += '\n[HINT]: b is the value at x=0. m is how much y changes each day.';
             }
             feedback.textContent = msg;
             btnVerify.disabled = false;
@@ -383,7 +383,7 @@
     });
 
     btnAbort.addEventListener('click', () => {
-      window.completePuzzleModule('diagnostic');
+      window.completePuzzleModule('extrapolation_failure');
     });
 
     ensureChartJs(() => {
