@@ -535,9 +535,12 @@
                 },
                 {
                     "input": ["diagnostic", "run diagnostic", "check system", "run check"],
-                    "type": "state",
-                    "requiredFlags": ["data_restored"],
-                    "nextState": "calculate_remaining_time"
+                    "type": "redirect",
+                    "setFlags": ["scientist_dead"],
+                    "requiredFlagsAny": ["data_restored"],
+                    "targetUrl": "puzzles/data_extrapolation.html",
+                    "fallbackText": "",
+                    "nextState": "extrapolation_success"
                 },
                 {
                     "input": ["help", "info", "?", "options"],
