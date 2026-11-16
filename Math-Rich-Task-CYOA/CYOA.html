@@ -313,7 +313,7 @@
         return;
       }
 
-      if (['resetstate', 'reset', 'clearsave', 'purge'].includes(normalizedInput)) {
+      if (['resetstate', 'reset', 'clearsave', 'purge', 'retry'].includes(normalizedInput)) {
         pendingReset = true;
         appendSystemResponse([
           "--------------------------------------------------------------------",
