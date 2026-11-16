@@ -652,7 +652,7 @@
                 "The hum of the life support system is the only sound aside from your boots echoing on the steel grates.",
                 "You arrive at the door to your managers office.",
                 "--------------------------------------------------------------------",
-                "Would you like to [open] the door, or [knock] first?"
+                "{TOKEN_1}"
             ],
             "dynamicLines": [
                 {
@@ -1412,7 +1412,7 @@
                {
                     "input": ["Continue", "next"],
                     "type": "state",
-                    "nextState": "escsape_alone_2"
+                    "nextState": "escape_alone_2"
                }, 
                {
                     "input": ["help", "info", "?", "options"],
